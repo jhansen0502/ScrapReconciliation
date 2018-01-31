@@ -8,7 +8,6 @@ Sub getScrapConnectReport()
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
-    Application.Calculation = xlCalculationManual
     
     Dim rg As Range
     Dim choiceRange As Range
@@ -99,6 +98,13 @@ Sub getScrapConnectReport()
         Sheets(scWorksheet).Delete
     End If
     
+    scfield = "Ticket Number"
+    scStartingRow = Sheets(scWorksheet).UsedRange.Find(what:=scfield).Row
+    
+    For i = scStartingRow - 1 To 1 Step -1
+        Sheets(scWorksheet).Rows(i).Delete
+    Next
+    
     'find used range of sheet
     scSheetLR = ActiveSheet.UsedRange.Rows _
     (ActiveSheet.UsedRange.Rows.Count).Row
@@ -120,8 +126,13 @@ Sub getScrapConnectReport()
         .Borders.LineStyle = xlContinuous
         .Columns.AutoFit
         .Rows.AutoFit
+        .NumberFormat = "General"
     End With
-    
+
+    For i = 1 To scSheetLC
+        Sheets(scWorksheet).Columns(i).TextToColumns DataType:=xlDelimited
+    Next
+            
     With UserForm1.Controls.Item("TextBox2")
         .Value = scFile
         .ForeColor = RGB(0, 0, 255)
@@ -142,7 +153,6 @@ Sub getScrapConnectReport()
     Application.DisplayStatusBar = True
     Application.EnableEvents = True
     Application.CutCopyMode = False
-    Application.Calculation = xlCalculationAutomatic
     
     Sheets(1).Activate
 

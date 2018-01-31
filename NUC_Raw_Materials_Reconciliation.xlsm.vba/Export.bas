@@ -3,7 +3,6 @@ Sub ExportToNew()
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
-    Application.Calculation = xlCalculationManual
     
     Dim NewName As String
     Dim nm As Name
@@ -68,7 +67,6 @@ Sub ExportToNew()
     Application.DisplayAlerts = True
     Application.DisplayStatusBar = True
     Application.EnableEvents = True
-    Application.Calculation = xlCalculationAutomatic
     
     With UserForm1
         .ExportToNewWB.Enabled = False
