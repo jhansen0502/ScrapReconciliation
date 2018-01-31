@@ -19,7 +19,7 @@ def parse(workbook_path):
         else:
             lines = decoded_content.split('\n')
         if lines:
-            name = lines[0].replace('Attribute VB_Name = ', '').strip('"')
+            #name = lines[0].replace('Attribute VB_Name = ', '').strip('"')
             content = [line for line in lines[1:] if not (
                 line.startswith('Attribute') and 'VB_' in line)]
             if content and content[-1] == '':
