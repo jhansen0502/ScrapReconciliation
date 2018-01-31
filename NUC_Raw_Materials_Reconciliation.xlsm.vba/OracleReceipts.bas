@@ -6,6 +6,7 @@ Sub getOracleReport()
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
+    Application.Calculation = xlCalculationManual
 
     ebsWorksheet = "Oracle Report"
 
@@ -145,5 +146,6 @@ Sub getOracleReport()
     Application.EnableEvents = True
     ActiveSheet.DisplayPageBreaks = True
     Application.CutCopyMode = False
+    Application.Calculation = xlCalculationAutomatic
 
 End Sub

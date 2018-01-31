@@ -10,6 +10,7 @@ Sub Reconcile()
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
+    Application.Calculation = xlCalculationManual
     
     Dim ebsRowNum As Long
     Dim scRowNum As Long
@@ -171,7 +172,7 @@ Sub Reconcile()
     Application.DisplayStatusBar = True
     Application.EnableEvents = True
     Application.CutCopyMode = False
-    
+    Application.Calculation = xlCalculationAutomatic
     
     With UserForm1
         .InvoiceSheet.Enabled = False
