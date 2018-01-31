@@ -8,6 +8,7 @@ Sub getScrapConnectReport()
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
+    Application.Calculation = xlCalculationManual
     
     Dim rg As Range
     Dim choiceRange As Range
@@ -141,7 +142,7 @@ Sub getScrapConnectReport()
     Application.DisplayStatusBar = True
     Application.EnableEvents = True
     Application.CutCopyMode = False
-    
+    Application.Calculation = xlCalculationAutomatic
     
     Sheets(1).Activate
 
