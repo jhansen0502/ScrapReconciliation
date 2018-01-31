@@ -78,6 +78,7 @@ Sub getDiscrepancies()
     hCellColumn = fCell.Column
     Set iCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Receipt Num")
     iCellColumn = iCell.Column
+    
     With Sheets("Weight Discrepancies")
         Range("A" & 1).Value = ebsfield
         Range("B" & 1).Value = bCell.Value
@@ -132,7 +133,7 @@ Sub getDiscrepancies()
     
     'This loop pulls all "Void" records from the SC source file
     'and copies to "Void and RTV" sheet.
-    Sheets(scWorksheet).Rows(1).EntireRow.Copy
+    Sheets(scWorksheet).Rows(scStartingRow).EntireRow.Copy
     Sheets("Void and RTV").Range("A" & Rows.Count).End(xlUp).Offset(2, 0).PasteSpecial xlPasteValues
     Sheets("Void and RTV").Range("A" & Rows.Count).End(xlUp).Rows.EntireRow.Font.Bold = True
     For i = 2 To scSheetLR
@@ -298,6 +299,13 @@ Sub getDiscrepancies()
         
     lastRowMissingSCSheet = Sheets("Receipts Missing From SC").UsedRange.Rows _
     (Sheets("Receipts Missing From SC").UsedRange.Rows.Count).Row
+    
+    reconciledLR = Sheets(reconciledSheet).UsedRange.Rows _
+    (Sheets(reconciledSheet).UsedRange.Rows.Count).Row
+    reconciledLC = Sheets(reconciledSheet).UsedRange.Columns _
+    (Sheets(reconciledSheet).UsedRange.Columns.Count).Column
+    Set reconcileRange = Sheets(reconciledSheet).Range(Sheets(reconciledSheet).Cells(1, 1), _
+    Sheets(reconciledSheet).Cells(reconciledLR, reconciledLC))
     
     a = Application.WorksheetFunction.CountA(Sheets(scWorksheet).Range(Sheets(scWorksheet) _
     .Cells(scStartingRow, scColumn), Sheets(scWorksheet).Cells(scSheetLR, scColumn)))

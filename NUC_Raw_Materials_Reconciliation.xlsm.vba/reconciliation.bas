@@ -172,7 +172,6 @@ Sub Reconcile()
     Application.EnableEvents = True
     Application.CutCopyMode = False
     
-    
     With UserForm1
         .InvoiceSheet.Enabled = False
         .InvoiceSheet.BackColor = RGB(214, 214, 214)
