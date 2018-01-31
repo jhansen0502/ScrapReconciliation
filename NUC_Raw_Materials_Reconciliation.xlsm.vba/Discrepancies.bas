@@ -3,7 +3,6 @@ Sub getDiscrepancies()
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
-    Application.Calculation = xlCalculationManual
     
     Dim varLR As Long
     Dim aCell As Range, aCellColumn As Long
@@ -407,8 +406,6 @@ Sub getDiscrepancies()
     Application.EnableEvents = True
     ActiveSheet.DisplayPageBreaks = True
     Application.CutCopyMode = False
-    Application.Calculation = xlCalculationAutomatic
-    
     
     With UserForm1
         .findDiscrepancies.Enabled = False
