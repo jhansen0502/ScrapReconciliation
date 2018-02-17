@@ -40,13 +40,25 @@ Private Sub findDiscrepancies_Click()
 getDiscrepancies
 End Sub
 
+Private Sub invReportUpload_Click()
+getInvoiceReport
+End Sub
+
+Private Sub invoiceMatch_Click()
+matchInvoices
+End Sub
+
+Private Sub OptionButton1_Click()
+
+End Sub
+
 Private Sub scReportUpload_Click()
 getScrapConnectReport
 End Sub
 
 
 Private Sub UserForm_Activate()
-
+clearEverything
 End Sub
 
 Private Sub UserForm_Click()
