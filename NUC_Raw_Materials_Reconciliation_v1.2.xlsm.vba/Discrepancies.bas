@@ -386,8 +386,8 @@ Sub getDiscrepancies()
 
     Sheets("Void and Return to Vendor").Rows(tempLastRow + 3).Font.Bold = True
 
-    Sheets("Void and Return to Vendor").Range("A" & (tempLastRow + 3)).Activate
-    ActiveWindow.FreezePanes = True
+'    Sheets("Void and Return to Vendor").Range("A" & (tempLastRow + 3)).Activate
+'    ActiveWindow.FreezePanes = True
     
     For j = Sheets("Void and Return to Vendor").UsedRange.Rows.Count To (tempLastRow + 4) Step -1
         If Sheets("Void and Return to Vendor").Cells(j, ebsStatusColumn) <> "Return to Vendor" Then

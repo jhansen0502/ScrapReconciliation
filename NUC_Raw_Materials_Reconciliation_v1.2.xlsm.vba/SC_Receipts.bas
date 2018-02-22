@@ -105,7 +105,6 @@ Sub getScrapConnectReport()
         Sheets(scWorksheet).Delete
     End If
     
-<<<<<<< HEAD
 '    ebsfield = "S C Tkt"
 '    ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield).Row
     scfield = "Ticket Number"
@@ -117,11 +116,6 @@ Sub getScrapConnectReport()
     scColumn = scFieldCell.Column
     scRow = scFieldCell.Row
 
-=======
-    scfield = "Ticket Number"
-    scStartingRow = Sheets(scWorksheet).UsedRange.Find(what:=scfield).Row
-    
->>>>>>> c44028e6e08b3d0769644990805848ef419aa8e9
     For i = scStartingRow - 1 To 1 Step -1
         Sheets(scWorksheet).Rows(i).Delete
     Next
