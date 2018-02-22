@@ -19,7 +19,8 @@ Sub ExportToNew()
     If UserForm1.OptionButton1.Value = "True" Then
     
     Sheets(Array("Home", "Reconciled Receipts", "Pending Receipts", "Oracle Report", "ScrapConnect Report", _
-    "Receipts Missing From Oracle", "Receipts Missing From SC", "Void and Return to Vendor", "Weight Discrepancies", "Unmatched Invoices")).Copy
+    "Receipts Missing From Oracle", "Receipts Missing From SC", "Void and Return to Vendor", "Weight Discrepancies", _
+    "Invoice Report", "Reconciled Invoices")).Copy
     On Error GoTo 0
     
     For Each ws In ActiveWorkbook.Worksheets

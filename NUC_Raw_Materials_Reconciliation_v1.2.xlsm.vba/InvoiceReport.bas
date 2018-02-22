@@ -108,12 +108,12 @@ Sub getInvoiceReport()
     Next
     
     'find used range of sheet
-    invSheetLR = ActiveSheet.UsedRange.Rows _
+    invsheetlr = ActiveSheet.UsedRange.Rows _
     (ActiveSheet.UsedRange.Rows.Count).Row
     invSheetLC = ActiveSheet.UsedRange.Columns _
     (ActiveSheet.UsedRange.Columns.Count).Column
     Set invSheetRange = Sheets(invworksheet).Range(Sheets(invworksheet).Cells(1, 1), _
-    Sheets(invworksheet).Cells(invSheetLR, invSheetLC))
+    Sheets(invworksheet).Cells(invsheetlr, invSheetLC))
     
     'formatting
     With Sheets(invworksheet)

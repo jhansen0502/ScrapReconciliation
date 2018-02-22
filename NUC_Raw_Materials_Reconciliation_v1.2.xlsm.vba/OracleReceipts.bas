@@ -100,10 +100,7 @@ Sub getOracleReport()
         Sheets(ebsWorksheet).Delete
     End If
     
-<<<<<<< HEAD
     
-=======
->>>>>>> c44028e6e08b3d0769644990805848ef419aa8e9
     ebsfield = "S C Tkt"
     ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield).Row
     
