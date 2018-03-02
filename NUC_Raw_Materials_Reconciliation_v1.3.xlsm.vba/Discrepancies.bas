@@ -1,4 +1,5 @@
 Sub getDiscrepancies()
+    On Error GoTo ErrorHandler
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
@@ -14,6 +15,7 @@ Sub getDiscrepancies()
     Dim gCell As Range, gCellColumn As Long
     Dim hCell As Range, hCellColumn As Long
     Dim iCell As Range, iCellColumn As Long
+    Dim pendingTicketNumberColumn As Long
     
     ebsWorksheet = "Oracle Report"
     scWorksheet = "ScrapConnect Report"
@@ -144,9 +146,9 @@ Sub getDiscrepancies()
     poNumberColumn = poNumberCell.Column
     Set receiptNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Receipt Num")
     receiptNumberColumn = receiptNumberCell.Column
-    Set brokerCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Supplier", Lookat:=xlWhole)
+    Set brokerCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Supplier", LookAt:=xlWhole)
     brokerColumn = brokerCell.Column
-    Set supplierCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Supplier", Lookat:=xlWhole)
+    Set supplierCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Supplier", LookAt:=xlWhole)
     supplierColumn = supplierCell.Column
     Set thirdPartySupplierCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Third Party Supplier")
     thirdPartySupplierColumn = thirdPartySupplierCell.Column
@@ -348,6 +350,7 @@ Sub getDiscrepancies()
     Sheets.Add(after:=Sheets("Receipts Missing From SC")).Name = "Void and Return To Vendor"
     Sheets(scWorksheet).UsedRange.Copy
     Sheets("Void and Return to Vendor").Range("A2").PasteSpecial xlPasteValues
+    Sheets("Void and Return to Vendor").Rows(2).Font.Bold = True
     With Sheets("Void and Return to Vendor").Range("A1")
         .Value = "Voided ScaleConnect Receipts"
         .Font.Bold = True
@@ -365,12 +368,49 @@ Sub getDiscrepancies()
         Sheets("Void and Return to Vendor").Rows(i).EntireRow.Delete
         End If
     Next
+    
+'    With Worksheets(1).Range("a1:a500")
+'        Set c = .Find(2, LookIn:=xlValues)
+'        If Not c Is Nothing Then
+'            firstAddress = c.Address
+'            Do
+'                c.Value = 5
+'                Set c = .FindNext(c)
+'            Loop While Not c Is Nothing And c.Address <> firstAddress
+'        End If
+'    End With
+    Dim tempCell As Range
+    Dim tempColumn As Long
+    Dim firstAddress As String
+    
+    With Sheets("Void and Return to Vendor").UsedRange
+        Set tempCell = .Find("Date", LookAt:=xlPart, MatchCase:=False)
+        If Not tempCell Is Nothing Then
+            firstAddress = tempCell.Address
+            Do
+                tempColumn = tempCell.Column
+                tempRow = tempCell.Row
+
+                Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor") _
+                .Cells(tempRow, tempColumn), Sheets("Void and Return to Vendor").Cells _
+                (Sheets("Void and Return to Vendor").UsedRange.Rows.Count, tempColumn)).NumberFormat = "mm/dd/yyyy"
+                
+                Set tempCell = .FindNext(tempCell)
+            Loop While Not tempCell Is Nothing And tempCell.Address <> firstAddress
+        End If
+    End With
+   
+'    For j = 1 To Sheets("Void and Return to Vendor").UsedRange.Columns.Count
+'        If InStr(1, Sheets("Void and Return to Vendor").Cells(1, j).Value, "Date") <> 0 Then
+'        Sheets("Void and Return to Vendor").Columns(j).NumberFormat = "mm/dd/yyyy"
+'        End If
+'    Next j
 
     tempLastRow = Sheets("Void and Return to Vendor").UsedRange.Rows.Count
-    Sheets("Void and Return to Vendor").Activate
-    With ActiveWindow
-        .SplitRow = (tempLastRow + 1)
-    End With
+'    Sheets("Void and Return to Vendor").Activate
+'    With ActiveWindow
+'        .SplitRow = (tempLastRow + 1)
+'    End With
 
     Sheets(ebsWorksheet).UsedRange.Copy
     With Sheets("Void and Return to Vendor")
@@ -390,17 +430,60 @@ Sub getDiscrepancies()
 '    ActiveWindow.FreezePanes = True
     
     For j = Sheets("Void and Return to Vendor").UsedRange.Rows.Count To (tempLastRow + 4) Step -1
-        If Sheets("Void and Return to Vendor").Cells(j, ebsStatusColumn) <> "Return to Vendor" Then
+        If Sheets("Void and Return to Vendor").Cells(j, ebsStatusColumn) <> "RETURN TO VENDOR" Then
         Sheets("Void and Return to Vendor").Rows(j).EntireRow.Delete
         End If
     Next
     
+    With Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor").Cells(tempLastRow + 3, 1), _
+    Sheets("Void and Return to Vendor").Cells(Sheets("Void and Return to Vendor").UsedRange.Rows.Count, _
+    Sheets("Void and Return to Vendor").UsedRange.Columns.Count))
+        Set tempCell = .Find("Date", LookAt:=xlPart, MatchCase:=False)
+        If Not tempCell Is Nothing Then
+            firstAddress = tempCell.Address
+            Do
+                tempColumn = tempCell.Column
+                tempRow = tempCell.Row
+
+                Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor") _
+                .Cells(tempRow, tempColumn), Sheets("Void and Return to Vendor").Cells _
+                (Sheets("Void and Return to Vendor").UsedRange.Rows.Count, tempColumn)).NumberFormat = "mm/dd/yyyy"
+                
+                Set tempCell = .FindNext(tempCell)
+            Loop While Not tempCell Is Nothing And tempCell.Address <> firstAddress
+        End If
+    End With
+    
+    Dim reconciledTicketNumberColumn As Long
+    Dim tempReconciledSheetRow As Long
+    
     Sheets.Add(after:=Sheets(reconciledSheet)).Name = "Pending Receipts"
     Sheets(scWorksheet).UsedRange.Copy
     Sheets("Pending Receipts").Range("A1").PasteSpecial xlPasteValues
+    pendingTicketNumberColumn = Sheets("Pending Receipts").UsedRange.Find(what:=scfield).Column
+    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:=ebsfield).Column
+    
     For h = scSheetLR To 2 Step -1
         If Sheets("Pending Receipts").Cells(h, scStatusColumn) <> "Awaiting" Then
         Sheets("Pending Receipts").Rows(h).EntireRow.Delete
+        End If
+    Next
+    
+'    For g = Sheets(reconciledSheet).UsedRange.Rows.Count To 2 Step -1
+'        If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets(reconciledSheet).Cells(g, reconciledTicketNumberColumn).Value, _
+'        Sheets("Pending Receipts").Columns(pendingTicketNumberColumn))) Then
+'        Sheets(reconciledSheet).Rows(g).EntireRow.Delete
+'        End If
+'    Next
+    
+    For g = 2 To Sheets("Pending Receipts").UsedRange.Rows.Count
+        If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets("Pending Receipts").Cells(g, pendingTicketNumberColumn).Value, _
+        Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn))) Then
+        
+        tempReconciledSheetRow = Application.Match(Sheets("Pending Receipts").Cells(g, pendingTicketNumberColumn).Value, _
+        Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn))
+        
+        Sheets(reconciledSheet).Rows(tempReconciledSheetRow).EntireRow.Delete
         End If
     Next
     
@@ -555,35 +638,35 @@ Sub getDiscrepancies()
     
     
     'Formatting for "Void and Return to Vendor" sheet
-    Dim voidLR As Long
-    Dim voidLC As Long
-    Dim voidRange As Range
-    Dim completedDateCell As Range
-    Dim completedDateColumn As Long
-    Dim completedDateRow As Long
-    
-    voidLR = Sheets("Void and Return to Vendor").UsedRange.Rows _
-        (Sheets("Void and Return to Vendor").UsedRange.Rows.Count).Row
-    voidLC = Sheets("void and Return to Vendor").UsedRange.Columns _
-        (Sheets(scWorksheet).UsedRange.Columns.Count).Column
-    Set voidRange = Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor").Cells _
-    (1, 1), Sheets("Void and Return to Vendor").Cells(voidLR, voidLC))
-    
-    
-    Set completedDateCell = Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor") _
-        .Cells(1, 1), Sheets("Void and Return to Vendor").Cells(voidLR, voidLC)).Find(what:="Completed Date")
-    completedDateRow = completedDateCell.Row
-    completedDateColumn = completedDateCell.Column
-    
-    With Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor").Cells(completedDateRow, completedDateColumn), _
-        Sheets("Void and Return to Vendor").Cells(voidLR, completedDateColumn))
-        .NumberFormat = "mm/dd/yyyy"
-    End With
-        
-    With voidRange
-        .Borders.LineStyle = xlContinuous
-        .Columns.AutoFit
-    End With
+'    Dim voidLR As Long
+'    Dim voidLC As Long
+'    Dim voidRange As Range
+'    Dim completedDateCell As Range
+'    Dim completedDateColumn As Long
+'    Dim completedDateRow As Long
+'
+'    voidLR = Sheets("Void and Return to Vendor").UsedRange.Rows _
+'        (Sheets("Void and Return to Vendor").UsedRange.Rows.Count).Row
+'    voidLC = Sheets("void and Return to Vendor").UsedRange.Columns _
+'        (Sheets(scWorksheet).UsedRange.Columns.Count).Column
+'    Set voidRange = Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor").Cells _
+'    (1, 1), Sheets("Void and Return to Vendor").Cells(voidLR, voidLC))
+'
+'
+'    Set completedDateCell = Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor") _
+'        .Cells(1, 1), Sheets("Void and Return to Vendor").Cells(voidLR, voidLC)).Find(what:="Completed Date")
+'    completedDateRow = completedDateCell.Row
+'    completedDateColumn = completedDateCell.Column
+'
+'    With Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor").Cells(completedDateRow, completedDateColumn), _
+'        Sheets("Void and Return to Vendor").Cells(voidLR, completedDateColumn))
+'        .NumberFormat = "mm/dd/yyyy"
+'    End With
+'
+'    With voidRange
+'        .Borders.LineStyle = xlContinuous
+'        .Columns.AutoFit
+'    End With
         
 '    Dim wdLR As Long
 '    Dim wdLC As Long
@@ -771,5 +854,6 @@ Sub getDiscrepancies()
     End If
 
     Sheets(1).Activate
-
+    Exit Sub
+ErrorHandler:     Call ErrorHandle
 End Sub

@@ -1,12 +1,12 @@
 Sub printSummary()
         
-    On Error Resume Next
+On Error GoTo ErrorHandler
     
     invworksheet = "Invoice Report"
     ebsWorksheet = "Oracle Report"
     scWorksheet = "ScrapConnect Report"
     reconciledSheet = "Reconciled Receipts"
-    
+    reconciledInvoices = "Reconciled Invoices"
 '*******************************************************  RESULTS SUMMARY ****************************************
     
     'This section calculates and prints summary data on "Home" page
@@ -76,76 +76,37 @@ Sub printSummary()
     Dim sheetlr As Long
     Dim sheetlc As Long
     
-    For i = 2 To Sheets.Count
-        Sheets(i).Activate
-        
-        sheetlr = Sheets(i).UsedRange.Rows _
-        (Sheets(i).UsedRange.Rows.Count).Row
-        
-        sheetlc = Sheets(i).UsedRange.Rows _
-        (Sheets(i).UsedRange.Rows.Count).Row
-
-        Set sheetRange = Sheets(i).Range(Sheets(i).Cells(1, 1), Sheets(i).Cells(sheetlr, sheetlc))
-                            
-        For j = 1 To sheetlc
-            If InStr(1, Sheets(i).Cells(1, j).Value, "Date") <> 0 Then
-            Sheets(i).Columns(j).NumberFormat = "mm/dd/yyyy"
-            End If
-        Next j
-        
-        With Sheets(i).UsedRange
-            .Rows(1).Font.Bold = True
-            .Columns.AutoFit
-        End With
-        
-        ActiveWindow.FreezePanes = False
-        Sheets(i).Rows(2).Select
-        ActiveWindow.FreezePanes = True
-             
-        Sheets(i).Rows(1).EntireRow.Insert
-        With Worksheets(i)
-            .Hyperlinks.Add Anchor:=.Range("A1"), Address:="", SubAddress:="'" & Worksheets(1).Name _
-            & "'" & "!A1", TextToDisplay:="Home"
-            With .Range("A1")
-                .Font.Bold = True
-                .Font.Color = RGB(214, 214, 214)
-                .Font.Size = 16
-                .Font.Name = "arial"
-                .RowHeight = 30
-                .ColumnWidth = 15
-                .HorizontalAlignment = xlCenter
-                .VerticalAlignment = xlCenter
-                .Interior.Color = RGB(0, 15, 230)
-            End With
-        End With
-    Next i
+   
     
     
     a = Application.Count(Sheets(scWorksheet).Range(Sheets(scWorksheet) _
     .Cells(scStartingRow, scColumn), Sheets(scWorksheet).Cells(scSheetLR, scColumn)))
     b = Application.Count(Sheets(ebsWorksheet).Range(Sheets(ebsWorksheet) _
     .Cells(ebsStartingRow, ebsColumn), Sheets(ebsWorksheet).Cells(ebsSheetLR, ebsColumn)))
+'    c = lastRowMissingSCSheet - ebsStartingRow
     c = Application.Count(Sheets("Receipts Missing From SC") _
-    .Range(Sheets("Receipts Missing From SC").Cells(ebsStartingRow, ebsColumn), _
-    Sheets("Receipts Missing From SC").Cells(lastRowMissingSCSheet, ebsColumn)))
+    .Range("A1:A" & Sheets("Receipts Missing From SC") _
+    .UsedRange.Rows.Count))
     d = Application.Count(Sheets("Receipts Missing From Oracle") _
-    .Range(Sheets("Receipts Missing From Oracle").Cells(scStartingRow, scColumn), _
-    Sheets("Receipts Missing From Oracle").Cells(lastRowMissingOracleSheet, scColumn)))
-    e = Application.Count(Sheets("Void and Return to Vendor").Range("A1:A" & varLR))
-    f = Application.Count(Sheets("Weight Discrepancies").Columns(1))
+    .Range("A1:A" & Sheets("Receipts Missing From Oracle").UsedRange.Rows.Count))
+    e = Application.Count(Sheets("Void and Return to Vendor").Range("A1:A" & Sheets("Void and Return to Vendor") _
+    .UsedRange.Rows.Count))
+    f = Application.Count(Sheets("Weight Discrepancies").Range("A1:A" & Sheets("Weight Discrepancies").UsedRange _
+    .Rows.Count))
     g = Application.Count(Sheets("Pending Receipts").Range("A1:A" & Sheets("Pending Receipts") _
     .UsedRange.Rows(Sheets("Pending Receipts").UsedRange.Rows.Count).Row))
     If UserForm1.OptionButton1.Value = "True" Then
     i = Application.WorksheetFunction.CountIf(Sheets(reconciledSheet).Range("A1:A" & Sheets(reconciledSheet) _
     .UsedRange.Rows.Count), ChrW(10006))
-    j = Application.WorksheetFunction.CountIf(Sheets(reconciledSheet).Range("A1:A" & Sheets(reconciledSheet) _
-    .UsedRange.Rows.Count), "ERROR")
+    j = Application.WorksheetFunction.CountIf(Sheets(reconciledInvoices).Range("A1:A" & Sheets(reconciledInvoices) _
+    .UsedRange.Rows.Count), ChrW(10006))
     End If
     
     
 '    g = Application.WorksheetFunction.CountIf(reconcileRange.Columns(Sheets(reconciledSheet) _
     .UsedRange.Find(what:="Invoice Total").Column), ">0")
-    h = reconciledLR
+    h = Application.Count(Sheets(reconciledSheet).Range("B1:B" & Sheets(reconciledSheet).UsedRange.Rows.Count))
+    
 
     'display summary on Reconciliation page
 '    With Sheets(1)
@@ -176,7 +137,7 @@ Sub printSummary()
         .Range("l5").Value = "Uninvoiced Receipts"
         
         .Hyperlinks.Add Anchor:=.Range("K6"), _
-        Address:="", SubAddress:="'" & Worksheets(reconciledSheet).Name & "'" & "!A1", _
+        Address:="", SubAddress:="'" & Worksheets(reconciledInvoices).Name & "'" & "!A1", _
         TextToDisplay:="'" & (j)
         .Range("l6").Value = "Invoices with Errors"
         End If
@@ -202,7 +163,7 @@ Sub printSummary()
         Address:="", SubAddress:="'" & Worksheets("Void and Return to Vendor").Name & "'" & "!A1", _
         TextToDisplay:="'" & (e)
 '        .Range("k8").Value = e - 2
-        .Range("l10").Value = "Voided and Return to Vendor receipts"
+        .Range("l10").Value = "Void and Return to Vendor receipts"
        
        .Hyperlinks.Add Anchor:=.Range("K11"), _
         Address:="", SubAddress:="'" & Worksheets("Weight Discrepancies").Name & "'" & "!A1", _
@@ -215,25 +176,71 @@ Sub printSummary()
     Sheets(1).Range("K5:L6").Delete Shift:=xlUp
     End If
 
-                With Sheets(1).Range("K1")
-                    .Value = "Summary - " & Format(Now, "mm/dd/yyyy HH:mm")
-                    .Font.Size = 24
-                    .Font.Bold = True
-                    .Font.Name = "arial"
-                    .Rows(1).AutoFit
-                End With
-                With Sheets(1).Range("k2:k11")
-                    .Font.Bold = True
-                    .Font.ColorIndex = 3
-                End With
-                With Sheets(1).Range("k2:l" & Sheets(1).Cells(Rows.Count, "L").End(xlUp).Row)
-                    .Font.Size = 15
-                    .Font.Bold = True
-                    .Font.Name = "arial"
-                    .Rows.AutoFit
-                    .BorderAround ColorIndex:=0, Weight:=xlThick
-                    .Columns.AutoFit
-                End With
+    For i = 2 To Sheets.Count
+        Sheets(i).Activate
+        
+        sheetlr = Sheets(i).UsedRange.Rows _
+        (Sheets(i).UsedRange.Rows.Count).Row
+        
+        sheetlc = Sheets(i).UsedRange.Rows _
+        (Sheets(i).UsedRange.Rows.Count).Row
+
+        Set sheetRange = Sheets(i).Range(Sheets(i).Cells(1, 1), Sheets(i).Cells(sheetlr, sheetlc))
+                            
+        For j = 1 To sheetlc
+            If InStr(1, Sheets(i).Cells(1, j).Value, "Date") <> 0 Then
+            Sheets(i).Columns(j).NumberFormat = "mm/dd/yyyy"
+            End If
+        Next j
+        
+        With Sheets(i).UsedRange
+            .Rows(1).Font.Bold = True
+            .Columns.AutoFit
+        End With
+        
+        If Not Sheets(i).Name = "Void and Return to Vendor" Then
+        ActiveWindow.FreezePanes = False
+        Sheets(i).Rows(2).Select
+        ActiveWindow.FreezePanes = True
+        End If
+        
+        Sheets(i).Rows(1).EntireRow.Insert
+        With Worksheets(i)
+            .Hyperlinks.Add Anchor:=.Range("A1"), Address:="", SubAddress:="'" & Worksheets(1).Name _
+            & "'" & "!A1", TextToDisplay:="Home"
+            With .Range("A1")
+                .Font.Bold = True
+                .Font.Color = RGB(214, 214, 214)
+                .Font.Size = 16
+                .Font.Name = "arial"
+                .RowHeight = 30
+                .ColumnWidth = 15
+                .HorizontalAlignment = xlCenter
+                .VerticalAlignment = xlCenter
+                .Interior.Color = RGB(0, 15, 230)
+            End With
+        End With
+    Next i
+    
+    With Sheets(1).Range("K1")
+        .Value = "Summary - " & Format(Now, "mm/dd/yyyy HH:mm")
+        .Font.Size = 24
+        .Font.Bold = True
+        .Font.Name = "arial"
+        .Rows(1).AutoFit
+    End With
+    With Sheets(1).Range("k2:k11")
+        .Font.Bold = True
+        .Font.ColorIndex = 3
+    End With
+    With Sheets(1).Range("k2:l" & Sheets(1).Cells(Rows.Count, "L").End(xlUp).Row)
+        .Font.Size = 15
+        .Font.Bold = True
+        .Font.Name = "arial"
+        .Rows.AutoFit
+        .BorderAround ColorIndex:=0, Weight:=xlThick
+        .Columns.AutoFit
+    End With
     
     Sheets(reconciledSheet).Visible = xlSheetHidden
     Sheets("Pending Receipts").Visible = xlSheetHidden
@@ -242,7 +249,14 @@ Sub printSummary()
     Sheets("Receipts Missing From Oracle").Visible = xlSheetHidden
     Sheets("Receipts Missing From SC").Visible = xlSheetHidden
     If UserForm1.OptionButton1.Value = "True" Then
-    Sheets("Unmatched Invoices").Visible = xlSheetHidden
+    With Sheets("Reconciled Invoices")
+        .Columns(Sheets("Reconciled Invoices").UsedRange _
+        .Find(what:="Invoice Amount").Column) _
+        .NumberFormat = "$#,##0.00_);[Red]($#,##0.00)"
+        .Visible = xlSheetHidden
+    End With
     End If
-    
+Exit Sub
+ErrorHandler: Call ErrorHandle
+
 End Sub

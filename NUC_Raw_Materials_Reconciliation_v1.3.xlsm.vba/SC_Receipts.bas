@@ -1,5 +1,5 @@
 Sub getScrapConnectReport()
-        
+On Error GoTo ErrorHandler
     'This sub allows the user to browse local machine for Oracle report
     'file.  Is set up to handle .xlsx, .xls & .csv files.
     scWorksheet = "ScrapConnect Report"
@@ -38,7 +38,7 @@ Sub getScrapConnectReport()
         
     'import SC file data onto new sheet
     Set rg = Application.Range("A1")
-    On Error GoTo 0
+'    On Error GoTo 0
     
     xAddress = rg.Address
     
@@ -235,9 +235,9 @@ Sub getScrapConnectReport()
     End With
     
     With scSheetRange
-        .Cells.Replace what:=vbCr, Replacement:="", Lookat:=xlPart
-        .Cells.Replace what:=vbLf, Replacement:="", Lookat:=xlPart
-        .Cells.Replace what:=vbCrLf, Replacement:="", Lookat:=xlPart
+        .Cells.Replace what:=vbCr, Replacement:="", LookAt:=xlPart
+        .Cells.Replace what:=vbLf, Replacement:="", LookAt:=xlPart
+        .Cells.Replace what:=vbCrLf, Replacement:="", LookAt:=xlPart
         .Borders.LineStyle = xlContinuous
         .Columns.AutoFit
         .Rows.AutoFit
@@ -283,6 +283,7 @@ Sub getScrapConnectReport()
     
     Sheets(1).Activate
 
-    
+Exit Sub
+ErrorHandler: Call ErrorHandle
 
 End Sub

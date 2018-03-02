@@ -1,4 +1,5 @@
 Sub ExportToNew()
+    On Error GoTo ErrorHandler
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
@@ -14,14 +15,14 @@ Sub ExportToNew()
     '   Copy User Sheets
     '   *Set sheet names to copy
     '   array("sheet name","sheet name 1","sheet name 2",...)
-    On Error GoTo ErrCatcher
+'    On Error GoTo ErrCatcher
     
     If UserForm1.OptionButton1.Value = "True" Then
     
     Sheets(Array("Home", "Reconciled Receipts", "Pending Receipts", "Oracle Report", "ScrapConnect Report", _
     "Receipts Missing From Oracle", "Receipts Missing From SC", "Void and Return to Vendor", "Weight Discrepancies", _
     "Invoice Report", "Reconciled Invoices")).Copy
-    On Error GoTo 0
+'    On Error GoTo 0
     
     For Each ws In ActiveWorkbook.Worksheets
         ws.Cells.Copy
@@ -41,7 +42,7 @@ Sub ExportToNew()
     
     Sheets(Array("Home", "Reconciled Receipts", "Pending Receipts", "Oracle Report", "ScrapConnect Report", _
     "Receipts Missing From Oracle", "Receipts Missing From SC", "Void and Return to Vendor", "Weight Discrepancies")).Copy
-    On Error GoTo 0
+'    On Error GoTo 0
     
     For Each ws In ActiveWorkbook.Worksheets
         ws.Cells.Copy
@@ -100,6 +101,9 @@ Sub ExportToNew()
     End With
     
 Exit Sub
-ErrCatcher:
-    MsgBox ("Specified sheets do not exist in this workbook.")
+ErrorHandler:     Call ErrorHandle
+
+'ErrCatcher:
+'    MsgBox ("Specified sheets do not exist in this workbook.")
+
 End Sub

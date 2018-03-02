@@ -1,5 +1,5 @@
 Sub clearEverything()
-
+    
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
