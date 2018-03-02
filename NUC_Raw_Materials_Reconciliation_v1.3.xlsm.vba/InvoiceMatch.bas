@@ -1,5 +1,5 @@
 Sub matchInvoices()
-
+On Error GoTo ErrorHandler
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
@@ -352,7 +352,7 @@ Sub matchInvoices()
         With Sheets(reconciledInvoices)
             .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
             .Cells(q, receiptVerifiedColumn).Font.Bold = True
-            .Cells(q, receiptverifiecolumn).Font.Color = RGB(0, 255, 0)
+            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
             .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006)
             .Cells(q, invoiceVerifiedColumn).Font.Bold = True
             .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(255, 0, 0)
@@ -683,6 +683,8 @@ Sub matchInvoices()
     End With
 
     Sheets(1).Activate
+Exit Sub
+ErrorHandler:     Call ErrorHandle
 
 
 End Sub
