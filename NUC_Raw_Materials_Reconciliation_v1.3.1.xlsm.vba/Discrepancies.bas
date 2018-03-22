@@ -478,10 +478,10 @@ Sub getDiscrepancies()
     
     For g = 2 To Sheets("Pending Receipts").UsedRange.Rows.Count
         If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets("Pending Receipts").Cells(g, pendingTicketNumberColumn).Value, _
-        Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn))) Then
+        Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn), 0)) Then
         
-        tempReconciledSheetRow = Application.Match(Sheets("Pending Receipts").Cells(g, pendingTicketNumberColumn).Value, _
-        Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn))
+        tempReconciledSheetRow = (Application.Match(Sheets("Pending Receipts").Cells(g, pendingTicketNumberColumn).Value, _
+        Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn), 0))
         
         Sheets(reconciledSheet).Rows(tempReconciledSheetRow).EntireRow.Delete
         End If
