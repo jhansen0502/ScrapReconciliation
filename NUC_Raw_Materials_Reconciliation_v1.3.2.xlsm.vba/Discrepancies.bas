@@ -132,6 +132,8 @@ Sub getDiscrepancies()
     Dim adjustedQtyCell As Range, adjustedQtyColumn As Long
     Dim shipmentNumberColumn As Long
     Dim poLineColumn As Long
+    Dim carrier_column As Long
+    Dim comments_column As Long
     
     'Ranges and variables for fields to compare across the two sheets.
     Set receiptTicketCell = Sheets(ebsWorksheet).UsedRange.Find(what:="S C Tkt")
@@ -180,6 +182,8 @@ Sub getDiscrepancies()
     invoiceDateColumn = invoiceDateCell.Column
     Set invoiceTotalCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice Total")
     invoiceTotalColumn = invoiceTotalCell.Column
+    carrier_column = Sheets(scWorksheet).UsedRange.Find(what:="Carrier").Column
+    comments_column = Sheets(scWorksheet).UsedRange.Find(what:="Comments").Column
         
     'column headers for Reconciled Receipts sheet
 '    Sheets.Add(after:=Sheets(1)).Name = reconciledSheet
@@ -284,6 +288,8 @@ Sub getDiscrepancies()
     Sheets(ebsWorksheet).Range(Sheets(ebsWorksheet).Cells(ebsStartingRow, unitPriceColumn), _
         Sheets(ebsWorksheet).Cells(ebsSheetLR, unitPriceColumn)).Copy
         Sheets(reconciledSheet).Range("P1:P" & ebsSheetLR).PasteSpecial xlPasteValues
+        
+    
 
 '     Sheets(reconciledSheet).Range("A2:A" & ebsSheetLR).Value = _
 '    Sheets(ebsWorksheet).Range(Sheets(ebsWorksheet).Cells(2, receiptTicketColumn), _
@@ -503,6 +509,35 @@ Sub getDiscrepancies()
         Sheets("Weight Discrepancies").Rows(p).EntireRow.Delete
         End If
     Next
+    
+    Dim q As Long
+    Dim rec_ticket_num_column As Long
+    Dim comment_carrier(1) As String
+    Dim rec_last_column As Long
+    rec_last_column = Sheets(reconciledSheet).UsedRange.Columns.Count
+    rec_ticket_num_column = Sheets(reconciledSheet).UsedRange.Find(what:="S C Tkt").Column
+    Sheets(reconciledSheet).Cells(1, rec_last_column + 1).Value = "Carrier"
+    Sheets(reconciledSheet).Cells(1, rec_last_column + 2).Value = "Comments"
+    
+    For q = 2 To Sheets(reconciledSheet).UsedRange.Rows.Count
+    
+        If Sheets(reconciledSheet).Cells(q, rec_ticket_num_column).Value > 0 Then
+        comment_carrier(0) = Application.WorksheetFunction.Index( _
+            Sheets(scWorksheet).Columns(carrier_column), _
+            Application.Match(Sheets(reconciledSheet).Cells(q, rec_ticket_num_column).Value, _
+            Sheets(scWorksheet).Columns(receiptTicket_1Column)))
+        comment_carrier(1) = Application.WorksheetFunction.Index( _
+            Sheets(scWorksheet).Columns(comments_column), _
+            Application.Match(Sheets(reconciledSheet).Cells(q, rec_ticket_num_column).Value, _
+            Sheets(scWorksheet).Columns(receiptTicket_1Column)))
+'        MsgBox (comment_carrier(0) & " " & comment_carrier(1))
+        
+        Sheets(reconciledSheet).Cells(q, rec_last_column + 1).Value = comment_carrier(0)
+        Sheets(reconciledSheet).Cells(q, rec_last_column + 2).Value = comment_carrier(1)
+        End If
+        
+    Next q
+    
 '
 '    nextRow = Sheets("Weight Discrepancies").Range("A" & Rows.Count).End(xlUp).Row
 
