@@ -331,11 +331,17 @@ Sub getDiscrepancies()
         .Style = "currency"
     End With
     
+    Dim oracleMissingStatusColumn As Long
+    oracleMissingStatusColumn = Sheets("Receipts Missing From Oracle").UsedRange.Find(what:="Status").Column
+    
     'find tickets missing from Oracle
     For j = Sheets("Receipts Missing From Oracle").UsedRange.Rows.Count To 2 Step -1
         If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets(scWorksheet).Cells(j, scColumn), _
         Sheets(ebsWorksheet).Columns(ebsColumn), 0)) Then
         Sheets("Receipts Missing From Oracle").Rows(j).EntireRow.Delete
+        ElseIf Sheets("Receipts Missing From Oracle").Cells(j, oracleMissingStatusColumn).Value <> "Processed" Then
+        Sheets("Receipts Missing From Oracle").Rows(j).EntireRow.Delete
+      
         End If
     Next
     
@@ -462,12 +468,28 @@ Sub getDiscrepancies()
     
     Dim reconciledTicketNumberColumn As Long
     Dim tempReconciledSheetRow As Long
+    Dim varTicketNoColumn As Long
+    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:=ebsfield).Column
+    varTicketNoColumn = Sheets("Void and Return to Vendor").UsedRange.Find(what:="Ticket Number").Column
+    Dim primaryWeightColumn
+    
+    For Z = 3 To Sheets("Void and Return to Vendor").UsedRange.Rows.Count
+        If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets("Void and Return to Vendor") _
+        .Cells(Z, varTicketNoColumn).Value, Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn), 0)) And _
+        Not Sheets("Void and Return to Vendor").Cells(Z, varTicketNoColumn).Value = ebsfield Then
+        
+        tempReconciledSheetRow = (Application.Match(Sheets("Void and Return to Vendor").Cells(Z, varTicketNoColumn) _
+        .Value, Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn), 0))
+        
+        Sheets(reconciledSheet).Rows(tempReconciledSheetRow).EntireRow.Delete
+        End If
+    Next
     
     Sheets.Add(after:=Sheets(reconciledSheet)).Name = "Pending Receipts"
     Sheets(scWorksheet).UsedRange.Copy
     Sheets("Pending Receipts").Range("A1").PasteSpecial xlPasteValues
     pendingTicketNumberColumn = Sheets("Pending Receipts").UsedRange.Find(what:=scfield).Column
-    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:=ebsfield).Column
+'    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:=ebsfield).Column
     
     For h = scSheetLR To 2 Step -1
         If Sheets("Pending Receipts").Cells(h, scStatusColumn) <> "Awaiting" Then

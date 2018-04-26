@@ -28,7 +28,7 @@ Function ErrorHandle()
                 vbCrLf & vbCrLf & _
                 "Please add relevant information here."
                 .attachments.Add ActiveWorkbook.FullName
-                .To = "john.hansen@nucor.com"
+                .to = "john.hansen@nucor.com"
                 .display
             End With
             Set aOutlook = Nothing
