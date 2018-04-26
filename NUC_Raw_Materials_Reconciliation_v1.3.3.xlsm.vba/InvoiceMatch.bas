@@ -191,12 +191,12 @@ On Error GoTo ErrorHandler
     reconciledPrimaryQuantityColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Primary Quantity").Column
     reconciledPONumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Po Number").Column
     
-    Dim pq As Long
-    For pq = Sheets(reconciledInvoices).UsedRange.Rows.Count To 2 Step -1
-        If Sheets(reconciledInvoices).Cells(pq, recInvInvoiceAmountColumn).Value < 0 Then
-        Sheets(reconciledInvoices).Rows(pq).EntireRow.Delete
-        End If
-    Next pq
+'    Dim pq As Long
+'    For pq = Sheets(reconciledInvoices).UsedRange.Rows.Count To 2 Step -1
+'        If Sheets(reconciledInvoices).Cells(pq, recInvInvoiceAmountColumn).Value < 0 Then
+'        Sheets(reconciledInvoices).Rows(pq).EntireRow.Delete
+'        End If
+'    Next pq
     
     For p = invsheetlr To 2 Step -1
         
@@ -301,15 +301,23 @@ On Error GoTo ErrorHandler
         End If
     Next
     
+    Dim recInvInvoiceTypeColumn As Long
+    recInvInvoiceTypeColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Type").Column
+    
     For R = 2 To Sheets(reconciledInvoices).UsedRange.Rows.Count
         If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets(reconciledInvoices).Cells(R, recInvReceiptNumberColumn), _
         Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)) Then
         
-        tempRow = Application.Match(Sheets(reconciledInvoices).Cells(R, recInvReceiptNumberColumn), _
-        Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)
-        
-        Sheets(reconciledInvoices).Cells(R, recInvTicketNumberColumn).Value = _
-        Sheets(reconciledSheet).Cells(tempRow, reconciledTicketNumberColumn).Value
+'            If Sheets(reconciledInvoices).Cells(R, recInvInvoiceAmountColumn).Value <= 0 And _
+'            Sheets(reconciledInvoices).Cells(R, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
+'            Sheets(reconciledInvoices).Cells(R, invoiceVerifiedColumn).Value = "CM"
+'            Else
+            tempRow = Application.Match(Sheets(reconciledInvoices).Cells(R, recInvReceiptNumberColumn), _
+            Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)
+            
+            Sheets(reconciledInvoices).Cells(R, recInvTicketNumberColumn).Value = _
+            Sheets(reconciledSheet).Cells(tempRow, reconciledTicketNumberColumn).Value
+'            End If
         End If
     Next
     
@@ -318,46 +326,99 @@ On Error GoTo ErrorHandler
     For q = invsheetlr To 2 Step -1
         If Application.WorksheetFunction.IsNA(Application.Match(Sheets(reconciledInvoices).Cells(q, recInvReceiptNumberColumn), _
         Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)) Then
+        
+        If Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
+            With Sheets(reconciledInvoices)
+                .Cells(q, invoiceVerifiedColumn).Value = "CM"
+                .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+                .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+                .Cells(q, receiptVerifiedColumn).Value = "Receipt Not Reconciled"
+                .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
+                .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            End With
+        Else
+
         With Sheets(reconciledInvoices)
-            .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006)
+            .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006) '"X"
             .Cells(q, invoiceVerifiedColumn).Font.Bold = True
             .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(255, 0, 0)
             .Cells(q, receiptVerifiedColumn).Value = "Receipt Not Reconciled"
             .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
             .Cells(q, receiptVerifiedColumn).Font.Bold = True
         End With
+        End If
         
         ElseIf Application.WorksheetFunction.IsNA(Application.Match(Sheets(reconciledInvoices).Cells(q, recInvTicketNumberColumn).Value, _
         Sheets(scWorksheet).Columns(scTicketNumberColumn), 0)) Then
-        With Sheets(reconciledInvoices)
-            .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006)
-            .Cells(q, invoiceVerifiedColumn).Font.Bold = True
-            .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(255, 0, 0)
-            .Cells(q, receiptVerifiedColumn).Value = "Ticket Not in ScrapConnect"
-            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
-            .Cells(q, receiptVerifiedColumn).Font.Bold = True
-        End With
+        If Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
+            With Sheets(reconciledInvoices)
+                .Cells(q, invoiceVerifiedColumn).Value = "CM"
+                .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+                .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+                .Cells(q, receiptVerifiedColumn).Value = "Ticket Not in ScrapConnect"
+                .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
+                .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            End With
+        Else
+            With Sheets(reconciledInvoices)
+                .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006) '"X"
+                .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+                .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(255, 0, 0)
+                .Cells(q, receiptVerifiedColumn).Value = "Ticket Not in ScrapConnect"
+                .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
+                .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            End With
+        End If
         
         ElseIf Application.Index(Sheets(scWorksheet).Columns(scInvoiceNumberColumn), _
         Application.Match(Sheets(reconciledInvoices).Cells(q, recInvTicketNumberColumn).Value, _
         Sheets(scWorksheet).Columns(scTicketNumberColumn), 0)) <> _
         Sheets(reconciledInvoices).Cells(q, recInvInvoiceNumberColumn).Value Then
+        
+        If Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
         With Sheets(reconciledInvoices)
-            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
+            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004) '(CHECK MARK)
             .Cells(q, receiptVerifiedColumn).Font.Bold = True
             .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
-            .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006)
+            .Cells(q, invoiceVerifiedColumn).Value = "CM"
+            .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+            .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+            .Cells(q, recInvInvoiceNumberColumn).Font.Color = RGB(255, 0, 0)
+            .Cells(q, recInvInvoiceNumberColumn).Font.Bold = True
+            .Cells(q, recInvInvoiceNumberColumn).Interior.Color = RGB(255, 255, 0)
+        End With
+        Else
+        With Sheets(reconciledInvoices)
+            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004) '(CHECK MARK)
+            .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
+            .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006) '"X"
             .Cells(q, invoiceVerifiedColumn).Font.Bold = True
             .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(255, 0, 0)
             .Cells(q, recInvInvoiceNumberColumn).Font.Color = RGB(255, 0, 0)
             .Cells(q, recInvInvoiceNumberColumn).Font.Bold = True
             .Cells(q, recInvInvoiceNumberColumn).Interior.Color = RGB(255, 255, 0)
         End With
+        End If
         
         ElseIf Application.Index(Sheets(scWorksheet).Columns(scInvoiceAmountColumn), _
         Application.Match(Sheets(reconciledInvoices).Cells(q, recInvTicketNumberColumn).Value, _
         Sheets(scWorksheet).Columns(scTicketNumberColumn), 0)) <> _
         Sheets(reconciledInvoices).Cells(q, recInvInvoiceAmountColumn).Value Then
+        
+        If Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
+        With Sheets(reconciledInvoices)
+            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
+            .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
+            .Cells(q, invoiceVerifiedColumn).Value = "CM"
+            .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+            .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+            .Cells(q, recInvInvoiceAmountColumn).Font.Color = RGB(255, 0, 0)
+            .Cells(q, recInvInvoiceAmountColumn).Font.Bold = True
+            .Cells(q, recInvInvoiceAmountColumn).Interior.Color = RGB(255, 255, 0)
+        End With
+        Else
         With Sheets(reconciledInvoices)
             .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
             .Cells(q, receiptVerifiedColumn).Font.Bold = True
@@ -369,11 +430,26 @@ On Error GoTo ErrorHandler
             .Cells(q, recInvInvoiceAmountColumn).Font.Bold = True
             .Cells(q, recInvInvoiceAmountColumn).Interior.Color = RGB(255, 255, 0)
         End With
+        End If
         
         ElseIf Application.Index(Sheets(reconciledSheet).Columns(reconciledPrimaryQuantityColumn), _
         Application.Match(Sheets(reconciledInvoices).Cells(q, recInvTicketNumberColumn).Value, _
         Sheets(reconciledSheet).Columns(reconciledTicketNumberColumn), 0)) <> _
         Sheets(reconciledInvoices).Cells(q, recInvInvoiceQtyColumn).Value Then
+        
+        If Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
+        With Sheets(reconciledInvoices)
+            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
+            .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
+            .Cells(q, invoiceVerifiedColumn).Value = "CM"
+            .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+            .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+            .Cells(q, recInvInvoiceQtyColumn).Font.Color = RGB(255, 0, 0)
+            .Cells(q, recInvInvoiceQtyColumn).Font.Bold = True
+            .Cells(q, recInvInvoiceQtyColumn).Interior.Color = RGB(255, 255, 0)
+        End With
+        Else
         With Sheets(reconciledInvoices)
             .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
             .Cells(q, receiptVerifiedColumn).Font.Bold = True
@@ -385,13 +461,14 @@ On Error GoTo ErrorHandler
             .Cells(q, recInvInvoiceQtyColumn).Font.Bold = True
             .Cells(q, recInvInvoiceQtyColumn).Interior.Color = RGB(255, 255, 0)
         End With
-    
+        End If
+        
         ElseIf Sheets(reconciledInvoices).Cells(q, recInvInvoicePOColumn).Value <> _
         Application.Index(Sheets(reconciledSheet).Columns(reconciledPONumberColumn), _
         Application.Match(Sheets(reconciledInvoices).Cells(q, recInvReceiptNumberColumn), _
         Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)) Then
         
-        
+        If Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value <> "Credit Memo" Then
 '        ElseIf Not Application.Index(Sheets(reconciledSheet).Columns(reconciledPONumberColumn), _
 '        Application.Match(Sheets(reconciledInvoices).Cells(q, recInvReceiptNumberColumn).Value, _
 '        Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)).Value = _
@@ -407,9 +484,33 @@ On Error GoTo ErrorHandler
             .Cells(q, recInvInvoicePOColumn).Font.Bold = True
             .Cells(q, recInvInvoicePOColumn).Interior.Color = RGB(255, 255, 0)
         End With
+        Else
+        With Sheets(reconciledInvoices)
+            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
+            .Cells(q, receiptVerifiedColumn).Font.Bold = True
+            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
+            .Cells(q, invoiceVerifiedColumn).Value = "CM"
+            .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+            .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+            .Cells(q, recInvInvoicePOColumn).Font.Color = RGB(255, 0, 0)
+            .Cells(q, recInvInvoicePOColumn).Font.Bold = True
+            .Cells(q, recInvInvoicePOColumn).Interior.Color = RGB(255, 255, 0)
+        End With
+        End If
+        
+        
+        ElseIf Sheets(reconciledInvoices).Cells(q, recInvInvoiceTypeColumn).Value = "Credit Memo" Then
+        
+        With Sheets(reconciledInvoices)
+            .Cells(q, invoiceVerifiedColumn).Value = "CM"
+            .Cells(q, invoiceVerifiedColumn).Font.Bold = True
+            .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
+            .Cells(q, receiptVerifiedColumn).Value = ChrW(10004)
+            .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
+            .Cells(q, receiptVerifiedColumn).Font.Bold = True
+        End With
         
         Else
-        
         With Sheets(reconciledInvoices)
             .Cells(q, invoiceVerifiedColumn).Value = ChrW(10004)
             .Cells(q, invoiceVerifiedColumn).Font.Bold = True
@@ -418,6 +519,7 @@ On Error GoTo ErrorHandler
             .Cells(q, receiptVerifiedColumn).Font.Color = RGB(0, 255, 0)
             .Cells(q, receiptVerifiedColumn).Font.Bold = True
         End With
+
         
         End If
     Next
