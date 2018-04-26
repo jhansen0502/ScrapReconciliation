@@ -191,9 +191,18 @@ On Error GoTo ErrorHandler
     reconciledPrimaryQuantityColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Primary Quantity").Column
     reconciledPONumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Po Number").Column
     
+    Dim pq As Long
+    For pq = Sheets(reconciledInvoices).UsedRange.Rows.Count To 2 Step -1
+        If Sheets(reconciledInvoices).Cells(pq, recInvInvoiceAmountColumn).Value < 0 Then
+        Sheets(reconciledInvoices).Rows(pq).EntireRow.Delete
+        End If
+    Next pq
+    
     For p = invsheetlr To 2 Step -1
+        
         If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets(invworksheet) _
-        .Cells(p, invReceiptNumColumn), Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)) Then
+        .Cells(p, invReceiptNumColumn), Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)) And _
+        Sheets(invworksheet).Cells(p, invInvoiceAmountColumn).Value >= 0 Then
 '
         matchedRow = Application.Match(Sheets(invworksheet). _
         Cells(p, invReceiptNumColumn).Value, Sheets(reconciledSheet).Columns(reconciledReceiptNumColumn), 0)
