@@ -108,10 +108,7 @@ On Error GoTo ErrorHandler
     h = Application.Count(Sheets(reconciledSheet).Range("B1:B" & Sheets(reconciledSheet).UsedRange.Rows.Count))
     
 
-    'display summary on Reconciliation page
-'    With Sheets(1)
-'        .Range("k2").Value = b - 1
-
+    'create table links
     With Worksheets(1)
         .Hyperlinks.Add Anchor:=.Range("K2"), _
         Address:="", SubAddress:="'" & Worksheets(ebsWorksheet).Name & "'" & "!A1", _
@@ -121,13 +118,11 @@ On Error GoTo ErrorHandler
         .Hyperlinks.Add Anchor:=.Range("K3"), _
         Address:="", SubAddress:="'" & Worksheets(scWorksheet).Name & "'" & "!A1", _
         TextToDisplay:="'" & (a)
-'        .Range("k3").Value = a - 1
         .Range("l3").Value = "Total ScrapConnect Receipts"
         
         .Hyperlinks.Add Anchor:=.Range("K4"), _
         Address:="", SubAddress:="'" & Worksheets(reconciledSheet).Name & "'" & "!A1", _
         TextToDisplay:="'" & (h)
-'        .Range("k4").Value = h - 1
         .Range("l4").Value = "Reconciled Receipts"
         
         If UserForm1.OptionButton1.Value = "True" Then
@@ -150,25 +145,21 @@ On Error GoTo ErrorHandler
         .Hyperlinks.Add Anchor:=.Range("K8"), _
         Address:="", SubAddress:="'" & Worksheets("Receipts Missing From SC").Name & "'" & "!A1", _
         TextToDisplay:="'" & (c)
-'        .Range("k6").Value = c - 1
         .Range("l8").Value = "Receipts missing from ScrapConnect"
         
         .Hyperlinks.Add Anchor:=.Range("K9"), _
         Address:="", SubAddress:="'" & Worksheets("Receipts Missing From Oracle").Name & "'" & "!A1", _
         TextToDisplay:="'" & (d)
-'        .Range("k7").Value = d - 1
         .Range("l9").Value = "Receipts missing from Oracle"
         
         .Hyperlinks.Add Anchor:=.Range("K10"), _
         Address:="", SubAddress:="'" & Worksheets("Void and Return to Vendor").Name & "'" & "!A1", _
         TextToDisplay:="'" & (e)
-'        .Range("k8").Value = e - 2
         .Range("l10").Value = "Void and Return to Vendor receipts"
        
        .Hyperlinks.Add Anchor:=.Range("K11"), _
         Address:="", SubAddress:="'" & Worksheets("Weight Discrepancies").Name & "'" & "!A1", _
         TextToDisplay:="'" & (f)
-'        .Range("k9").Value = f - 1
         .Range("l11").Value = "Weight discrepancies"
     End With
      

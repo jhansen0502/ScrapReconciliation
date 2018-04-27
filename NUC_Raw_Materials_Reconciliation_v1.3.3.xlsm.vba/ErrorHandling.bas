@@ -49,7 +49,6 @@ Function ErrorHandle()
         cancelType = MsgBox("Are you sure you want to exit?", vbYesNo, "Confirm")
         Select Case cancelType
         Case 6
-'            Exit Function
             ActiveWorkbook.Close savechanges:=False
         Case 7
             Call ErrorHandle
