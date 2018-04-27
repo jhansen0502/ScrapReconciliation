@@ -9,25 +9,20 @@ Sub ExportToNew()
     Dim nm As Name
     Dim ws As Worksheet
     
+    'confirmation modal to export
     If MsgBox("Results will be exported to a new workbook.  Press OK to confirm.", vbOKCancel, _
     "NewCopy") = vbCancel Then Exit Sub
     
-    '   Copy User Sheets
-    '   *Set sheet names to copy
-    '   array("sheet name","sheet name 1","sheet name 2",...)
-'    On Error GoTo ErrCatcher
-    
+    'checks for invoice matching to copy correct tables to new file
     If UserForm1.OptionButton1.Value = "True" Then
     
     Sheets(Array("Home", "Reconciled Receipts", "Pending Receipts", "Oracle Report", "ScrapConnect Report", _
     "Receipts Missing From Oracle", "Receipts Missing From SC", "Void and Return to Vendor", "Weight Discrepancies", _
     "Invoice Report", "Reconciled Invoices")).Copy
-'    On Error GoTo 0
     
     For Each ws In ActiveWorkbook.Worksheets
         ws.Cells.Copy
         ws.[A1].PasteSpecial xlPasteAll
-'        ws.Cells.Hyperlinks.Delete
         Application.CutCopyMode = False
         Cells(2, 1).Select
         ws.Activate
@@ -40,14 +35,13 @@ Sub ExportToNew()
     
     Else
     
+    'if no invoice matching, these are the copied tables
     Sheets(Array("Home", "Reconciled Receipts", "Pending Receipts", "Oracle Report", "ScrapConnect Report", _
     "Receipts Missing From Oracle", "Receipts Missing From SC", "Void and Return to Vendor", "Weight Discrepancies")).Copy
-'    On Error GoTo 0
     
     For Each ws In ActiveWorkbook.Worksheets
         ws.Cells.Copy
         ws.[A1].PasteSpecial xlPasteAll
-'        ws.Cells.Hyperlinks.Delete
         Application.CutCopyMode = False
         Cells(2, 1).Select
         ws.Activate
@@ -62,6 +56,7 @@ Sub ExportToNew()
     
     UserForm1.Hide
     
+    'input box for new file name
     NewName = InputBox("Please enter the name of your new workbook" & vbCr & _
     "File will be saved in current folder.", "New Copy")
     
@@ -102,8 +97,5 @@ Sub ExportToNew()
     
 Exit Sub
 ErrorHandler:     Call ErrorHandle
-
-'ErrCatcher:
-'    MsgBox ("Specified sheets do not exist in this workbook.")
 
 End Sub

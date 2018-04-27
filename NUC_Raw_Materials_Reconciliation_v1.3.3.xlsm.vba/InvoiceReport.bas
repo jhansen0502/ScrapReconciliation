@@ -121,6 +121,7 @@ On Error GoTo ErrorHandler
         Font.Bold = True
     End With
     
+    'remove carriage returns
     With invSheetRange
         .Cells.Replace what:=vbCr, Replacement:="", LookAt:=xlPart
         .Cells.Replace what:=vbLf, Replacement:="", LookAt:=xlPart
@@ -133,13 +134,15 @@ On Error GoTo ErrorHandler
     For i = 1 To invSheetLC
         Sheets(invworksheet).Columns(i).TextToColumns DataType:=xlDelimited
     Next
-
+    
+    'fill userform textbox with filepath
     With UserForm1.Controls.Item("TextBox3")
         .Value = invFile
         .ForeColor = RGB(0, 0, 255)
         .BackColor = RGB(255, 255, 255)
     End With
     
+    'enable/disable buttons on userform
     With UserForm1
         .invReportUpload.Enabled = False
         .invReportUpload.BackColor = RGB(214, 214, 214)
@@ -149,7 +152,8 @@ On Error GoTo ErrorHandler
 
     Sheets(invworksheet).Visible = xlSheetHidden
     Sheets(1).Activate
-
+    
+    're-enable excel screen updating
     Application.ScreenUpdating = True
     Application.DisplayAlerts = True
     Application.DisplayStatusBar = True
