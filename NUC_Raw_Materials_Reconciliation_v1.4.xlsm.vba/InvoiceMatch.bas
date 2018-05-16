@@ -56,15 +56,15 @@ On Error GoTo ErrorHandler
     'add table for Reconciled Invoices and define invoice report columns for lookups
     Sheets.Add(after:=Sheets(1)).Name = reconciledInvoices
     
-    invInvoiceTypeColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Type").Column
-    invInvoiceDateColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Date").Column
-    invReceiptNumColumn = Sheets(invworksheet).UsedRange.Find(what:="Receipt Num").Column
-    invInvoiceAmountColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Amount").Column
-    invInvoiceQuantityColumn = Sheets(invworksheet).UsedRange.Find(what:="Qty Received").Column
-    invInvoiceNumberColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Number").Column
-    invPoColumn = Sheets(invworksheet).UsedRange.Find(what:="PO Number").Column
-    invPoLineColumn = Sheets(invworksheet).UsedRange.Find(what:="PO Line Num").Column
-    invStartingRow = Sheets(invworksheet).UsedRange.Find(what:="PO Line Num").Row
+    invInvoiceTypeColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Type", lookat:=xlWhole).Column
+    invInvoiceDateColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Date", lookat:=xlWhole).Column
+    invReceiptNumColumn = Sheets(invworksheet).UsedRange.Find(what:="Receipt Num", lookat:=xlWhole).Column
+    invInvoiceAmountColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Amount", lookat:=xlWhole).Column
+    invInvoiceQuantityColumn = Sheets(invworksheet).UsedRange.Find(what:="Qty Received", lookat:=xlWhole).Column
+    invInvoiceNumberColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Number", lookat:=xlWhole).Column
+    invPoColumn = Sheets(invworksheet).UsedRange.Find(what:="PO Number", lookat:=xlWhole).Column
+    invPoLineColumn = Sheets(invworksheet).UsedRange.Find(what:="PO Line Num", lookat:=xlWhole).Column
+    invStartingRow = Sheets(invworksheet).UsedRange.Find(what:="PO Line Num", lookat:=xlWhole).Row
     invsheetlr = Sheets(invworksheet).UsedRange.Rows(Sheets(invworksheet) _
     .UsedRange.Rows.Count).Row
     
@@ -109,14 +109,14 @@ On Error GoTo ErrorHandler
     For i = 2 To invsheetlr
         Sheets(reconciledInvoices).Cells(i, (recInvoicesLC + 1)).Value = _
         Sheets(reconciledInvoices).Cells(i, (Sheets(reconciledInvoices).UsedRange.Find(what:= _
-        "PO Number").Column)).Value & "-" & Sheets(reconciledInvoices).Cells(i, (Sheets(reconciledInvoices) _
-        .UsedRange.Find(what:="PO Line Num").Column)).Value
+        "PO Number", lookat:=xlWhole).Column)).Value & "-" & Sheets(reconciledInvoices).Cells(i, (Sheets(reconciledInvoices) _
+        .UsedRange.Find(what:="PO Line Num", lookat:=xlWhole).Column)).Value
     Next
             
     Sheets(reconciledInvoices).Columns(Sheets(reconciledInvoices).UsedRange.Find(what:= _
-        "PO Number").Column).EntireColumn.Delete
+        "PO Number", lookat:=xlWhole).Column).EntireColumn.Delete
     Sheets(reconciledInvoices).Columns(Sheets(reconciledInvoices).UsedRange.Find(what:= _
-        "PO Line Num").Column).EntireColumn.Delete
+        "PO Line Num", lookat:=xlWhole).Column).EntireColumn.Delete
     
     'insert summary data/feedback columns
     With Sheets(reconciledInvoices)
@@ -129,13 +129,13 @@ On Error GoTo ErrorHandler
         .Range("A2:C" & Sheets(reconciledInvoices).UsedRange.Rows.Count).HorizontalAlignment = xlCenter
     End With
     
-    receiptVerifiedColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Receipt Verified?").Column
-    invoiceVerifiedColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Verified?").Column
-    recInvReceiptNumberColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Receipt Num").Column
-    recInvInvoiceNumberColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Number").Column
-    recInvInvoiceAmountColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Amount").Column
-    recInvInvoiceQtyColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Qty Received").Column
-    recInvInvoicePOColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="PO Number & PO Line").Column
+    receiptVerifiedColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Receipt Verified?", lookat:=xlWhole).Column
+    invoiceVerifiedColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Verified?", lookat:=xlWhole).Column
+    recInvReceiptNumberColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Receipt Num", lookat:=xlWhole).Column
+    recInvInvoiceNumberColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Number", lookat:=xlWhole).Column
+    recInvInvoiceAmountColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Amount", lookat:=xlWhole).Column
+    recInvInvoiceQtyColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Qty Received", lookat:=xlWhole).Column
+    recInvInvoicePOColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="PO Number & PO Line", lookat:=xlWhole).Column
     reconciledLC = Sheets(reconciledSheet).UsedRange.Columns.Count
     
     With Sheets(reconciledSheet)
@@ -151,23 +151,23 @@ On Error GoTo ErrorHandler
         .HorizontalAlignment = xlCenter
     End With
 
-    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="S C Tkt").Column
-    recInvTicketNumberColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Ticket Number").Column
+    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="S C Tkt", lookat:=xlWhole).Column
+    recInvTicketNumberColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Ticket Number", lookat:=xlWhole).Column
 
     With Sheets(reconciledSheet)
         .Columns((reconciledTicketNumberColumn + 1)).EntireColumn.Insert
         .Cells(1, (reconciledTicketNumberColumn + 1)).Value = "Invoice Number"
     End With
     
-    reconciledTransDateColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Transaction Date").Column
-    reconciledInvColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Invoiced").Column
-    reconciledInvNumColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Invoice Number").Column
-    reconciledReceiptNumColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Receipt Num").Column
-    scTicketNumberColumn = Sheets(scWorksheet).UsedRange.Find(what:="Ticket Number").Column
-    scInvoiceAmountColumn = Sheets(scWorksheet).UsedRange.Find(what:="Invoice Total").Column
-    scInvoiceNumberColumn = Sheets(scWorksheet).UsedRange.Find(what:="Invoice #").Column
-    reconciledPrimaryQuantityColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Primary Quantity").Column
-    reconciledPONumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Po Number").Column
+    reconciledTransDateColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Transaction Date", lookat:=xlWhole).Column
+    reconciledInvColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Invoiced", lookat:=xlWhole).Column
+    reconciledInvNumColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Invoice Number", lookat:=xlWhole).Column
+    reconciledReceiptNumColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Receipt Num", lookat:=xlWhole).Column
+    scTicketNumberColumn = Sheets(scWorksheet).UsedRange.Find(what:="Ticket Number", lookat:=xlWhole).Column
+    scInvoiceAmountColumn = Sheets(scWorksheet).UsedRange.Find(what:="Invoice Total", lookat:=xlWhole).Column
+    scInvoiceNumberColumn = Sheets(scWorksheet).UsedRange.Find(what:="Invoice #", lookat:=xlWhole).Column
+    reconciledPrimaryQuantityColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Primary Quantity", lookat:=xlWhole).Column
+    reconciledPONumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Po Number", lookat:=xlWhole).Column
     
     For p = invsheetlr To 2 Step -1
         'check invoice info to verify the receipt has been reconciled.  also checks that invoice is not
@@ -207,7 +207,7 @@ On Error GoTo ErrorHandler
     Next
     
     Dim recInvInvoiceTypeColumn As Long
-    recInvInvoiceTypeColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Type").Column
+    recInvInvoiceTypeColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Invoice Type", lookat:=xlWhole).Column
     
     'lookup receipt ticket number for reconciled invoices table
     For R = 2 To Sheets(reconciledInvoices).UsedRange.Rows.Count

@@ -1,47 +1,45 @@
-Sub getOracleReport()
+Sub getInvoiceReport()
 On Error GoTo ErrorHandler
-    
-    
-    'This sub allows the user to browse local machine for Oracle report
+    'This sub allows the user to browse local machine for Oracle Invoice report
     'file.  Is set up to handle .xlsx, .xls & .csv files.
     Application.ScreenUpdating = False
     Application.DisplayAlerts = False
     Application.DisplayStatusBar = False
     Application.EnableEvents = False
 
-    ebsWorksheet = "Oracle Report"
+    invworksheet = "Invoice Report"
 
     Dim rg As Range
     Dim choiceRange As Range
     Dim xAddress
-    Dim ebsTxtBox As MSForms.Control
-    Dim ebsSheetRange As Range
-    Dim ebsTextBox As MSForms.Control
-    Dim ebsFileName As String
-    Dim ebsFile As Variant
-    
+    Dim invTxtBox As MSForms.Control
+    Dim invSheetRange As Range
+    Dim invTextBox As MSForms.Control
+    Dim invFileName As String
+    Dim invFile As Variant
     
     'Open file location
-    ebsFile = Application.GetOpenFilename( _
+    invFile = Application.GetOpenFilename( _
     "Excel Files (*.csv;*.xls;*.xlsx), *.csv;*.xls;*.xlsx")
-    If ebsFile = False Then Exit Sub
+    If invFile = False Then Exit Sub
     
     'add new sheet for Oracle report data
-    Sheets.Add(after:=Sheets(Sheets.Count)).Name = ebsWorksheet
-    Sheets(ebsWorksheet).Activate
+    Sheets.Add(after:=Sheets(Sheets.Count)).Name = invworksheet
+    Sheets(invworksheet).Activate
     
     ActiveSheet.DisplayPageBreaks = False
         
     'import ebs file data onto new sheet
     Set rg = Application.Range("A1")
+'    On Error GoTo 0
     
     xAddress = rg.Address
     
     'for .csv files
-    If ebsFile Like "*.csv" Then
+    If invFile Like "*.csv" Then
     
         With ActiveSheet.QueryTables.Add(Connection:="TEXT;" & ebsFile, _
-        Destination:=Worksheets(ebsWorksheet).Range(xAddress))
+        Destination:=Worksheets(invworksheet).Range(xAddress))
             .FieldNames = True
             .RowNumbers = False
             .FillAdjacentFormulas = False
@@ -66,9 +64,9 @@ On Error GoTo ErrorHandler
         End With
         
     'for .xls & .xlsx files:
-    ElseIf ebsFile Like "*.xls*" Then
+    ElseIf invFile Like "*.xls*" Then
         
-        Sheets(ebsWorksheet).Activate
+        Sheets(invworksheet).Activate
         
         Dim ebsLR As Long
         Dim ebsLC As Long
@@ -79,17 +77,17 @@ On Error GoTo ErrorHandler
         Dim tgtsheet As Worksheet
         Dim rngpaste As Range
                 
-        Set wbCopy = Workbooks.Open(ebsFile)
+        Set wbCopy = Workbooks.Open(invFile)
         
-        ebsLR = ActiveSheet.UsedRange.Rows _
+        invLR = ActiveSheet.UsedRange.Rows _
         (ActiveSheet.UsedRange.Rows.Count).Row
-        ebsLC = ActiveSheet.UsedRange.Columns _
+        invLC = ActiveSheet.UsedRange.Columns _
         (ActiveSheet.UsedRange.Columns.Count).Column
             
         Set wsCopy = wbCopy.Worksheets(1)
-        Set rngCopy = wsCopy.Range(Cells(1, 1).Address(), Cells(ebsLR, ebsLC).Address())
+        Set rngCopy = wsCopy.Range(Cells(1, 1).Address(), Cells(invLR, invLC).Address())
         Set tgtbook = ThisWorkbook
-        Set tgtsheet = tgtbook.Worksheets(ebsWorksheet)
+        Set tgtsheet = tgtbook.Worksheets(invworksheet)
         Set rngpaste = tgtsheet.Range("A1")
         
         rngCopy.Copy
@@ -99,66 +97,63 @@ On Error GoTo ErrorHandler
         
     Else
         MsgBox ("You must select a valid Excel file type (*.xls; *.xlsx; *.csv)")
-        Sheets(ebsWorksheet).Delete
+        Sheets(invworksheet).Delete
     End If
-
-
-
-    ebsfield = "S C Tkt"
-    ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield).Row
     
-    For i = ebsStartingRow - 1 To 1 Step -1
-        Sheets(ebsWorksheet).Rows(i).Delete
+    invfield = "Receipt Num"
+    invStartingRow = Sheets(invworksheet).UsedRange.Find(what:=invfield, lookat:=xlWhole).Row
+    
+    For i = invStartingRow - 1 To 1 Step -1
+        Sheets(invworksheet).Rows(i).Delete
     Next
     
     'find used range of sheet
-    ebsSheetLR = ActiveSheet.UsedRange.Rows _
+    invsheetlr = ActiveSheet.UsedRange.Rows _
     (ActiveSheet.UsedRange.Rows.Count).Row
-    ebsSheetLC = ActiveSheet.UsedRange.Columns _
+    invSheetLC = ActiveSheet.UsedRange.Columns _
     (ActiveSheet.UsedRange.Columns.Count).Column
-    Set ebsSheetRange = Sheets(ebsWorksheet).Range(Sheets(ebsWorksheet).Cells(1, 1), _
-    Sheets(ebsWorksheet).Cells(ebsSheetLR, ebsSheetLC))
+    Set invSheetRange = Sheets(invworksheet).Range(Sheets(invworksheet).Cells(1, 1), _
+    Sheets(invworksheet).Cells(invsheetlr, invSheetLC))
     
     'formatting
-    With Sheets(ebsWorksheet)
-        .Range(Sheets(ebsWorksheet).Cells(1, 1), Sheets(ebsWorksheet).Cells(1, ebsSheetLC)). _
+    With Sheets(invworksheet)
+        .Range(Sheets(invworksheet).Cells(1, 1), Sheets(invworksheet).Cells(1, invSheetLC)). _
         Font.Bold = True
     End With
     
-    With ebsSheetRange
-        .Cells.Replace what:=vbCr, Replacement:="", LookAt:=xlPart
-        .Cells.Replace what:=vbLf, Replacement:="", LookAt:=xlPart
-        .Cells.Replace what:=vbCrLf, Replacement:="", LookAt:=xlPart
+    'remove carriage returns
+    With invSheetRange
+        .Cells.Replace what:=vbCr, Replacement:="", lookat:=xlPart
+        .Cells.Replace what:=vbLf, Replacement:="", lookat:=xlPart
+        .Cells.Replace what:=vbCrLf, Replacement:="", lookat:=xlPart
         .Columns.AutoFit
         .Rows.AutoFit
         .Borders.LineStyle = xlContinuous
     End With
 
-    For i = 1 To ebsSheetLC
-        Sheets(ebsWorksheet).Columns(i).TextToColumns DataType:=xlDelimited
+    For i = 1 To invSheetLC
+        Sheets(invworksheet).Columns(i).TextToColumns DataType:=xlDelimited
     Next
-
-    With UserForm1.Controls.Item("TextBox1")
-        .Value = ebsFile
+    
+    'fill userform textbox with filepath
+    With UserForm1.Controls.Item("TextBox3")
+        .Value = invFile
         .ForeColor = RGB(0, 0, 255)
         .BackColor = RGB(255, 255, 255)
     End With
     
+    'enable/disable buttons on userform
     With UserForm1
-        .ebsReportUpload.Enabled = False
-        .ebsReportUpload.BackColor = RGB(214, 214, 214)
-        .scReportUpload.Enabled = True
-        .scReportUpload.BackColor = RGB(0, 0, 255)
+        .invReportUpload.Enabled = False
+        .invReportUpload.BackColor = RGB(214, 214, 214)
+        .findDiscrepancies.Enabled = True
+        .findDiscrepancies.BackColor = RGB(0, 238, 0)
     End With
 
-    If UserForm1.OptionButton1.Value = "False" Then
-    UserForm1.OptionButton1.Enabled = False
-    UserForm1.OptionButton1.ForeColor = RGB(255, 255, 255)
-    End If
-    
-    Sheets(ebsWorksheet).Visible = xlSheetHidden
+    Sheets(invworksheet).Visible = xlSheetHidden
     Sheets(1).Activate
-
+    
+    're-enable excel screen updating
     Application.ScreenUpdating = True
     Application.DisplayAlerts = True
     Application.DisplayStatusBar = True
@@ -166,6 +161,6 @@ On Error GoTo ErrorHandler
     ActiveSheet.DisplayPageBreaks = True
     Application.CutCopyMode = False
 Exit Sub
-ErrorHandler:   Call ErrorHandle
+ErrorHandler:     Call ErrorHandle
 
 End Sub

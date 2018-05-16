@@ -19,8 +19,8 @@ On Error GoTo ErrorHandler
     reconciledSheet = "Reconciled Receipts"
     ebsfield = "S C Tkt"
     scfield = "Ticket Number"
-    ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield).Row
-    scStartingRow = Sheets(scWorksheet).UsedRange.Find(what:=scfield).Row
+    ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield, lookat:=xlWhole).Row
+    scStartingRow = Sheets(scWorksheet).UsedRange.Find(what:=scfield, lookat:=xlWhole).Row
     
     'set ranges for source data sheets
     '"LR"=last row
@@ -39,10 +39,10 @@ On Error GoTo ErrorHandler
     Sheets(ebsWorksheet).Cells(ebsSheetLR, ebsSheetLC))
     
     'These ranges and variables find the primary keys from the ebs and SC reports
-    Set ebsFieldCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:=ebsfield)
+    Set ebsFieldCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:=ebsfield, lookat:=xlWhole)
     ebsColumn = ebsFieldCell.Column
     ebsRow = ebsFieldCell.Row
-    Set scFieldCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:=scfield)
+    Set scFieldCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:=scfield, lookat:=xlWhole)
     scColumn = scFieldCell.Column
     scRow = scFieldCell.Row
     
@@ -242,7 +242,7 @@ On Error GoTo ErrorHandler
     If UserForm1.OptionButton1.Value = "True" Then
     With Sheets("Reconciled Invoices")
         .Columns(Sheets("Reconciled Invoices").UsedRange _
-        .Find(what:="Invoice Amount").Column) _
+        .Find(what:="Invoice Amount", lookat:=xlWhole).Column) _
         .NumberFormat = "$#,##0.00_);[Red]($#,##0.00)"
         .Visible = xlSheetHidden
     End With

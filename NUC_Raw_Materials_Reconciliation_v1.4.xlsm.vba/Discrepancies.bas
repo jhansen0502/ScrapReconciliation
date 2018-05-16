@@ -22,8 +22,8 @@ Sub getDiscrepancies()
     reconciledSheet = "Reconciled Receipts"
     ebsfield = "S C Tkt"
     scfield = "Ticket Number"
-    ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield).Row
-    scStartingRow = Sheets(scWorksheet).UsedRange.Find(what:=scfield).Row
+    ebsStartingRow = Sheets(ebsWorksheet).UsedRange.Find(what:=ebsfield, lookat:=xlWhole).Row
+    scStartingRow = Sheets(scWorksheet).UsedRange.Find(what:=scfield, lookat:=xlWhole).Row
     
     'set ranges for source data sheets
     '"LR"=last row
@@ -44,10 +44,10 @@ Sub getDiscrepancies()
     Sheets(ebsWorksheet).Cells(ebsSheetLR, ebsSheetLC))
     
     'These ranges and variables find the primary keys from the ebs and SC reports
-    Set ebsFieldCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:=ebsfield)
+    Set ebsFieldCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:=ebsfield, lookat:=xlWhole)
     ebsColumn = ebsFieldCell.Column
     ebsRow = ebsFieldCell.Row
-    Set scFieldCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:=scfield)
+    Set scFieldCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:=scfield, lookat:=xlWhole)
     scColumn = scFieldCell.Column
     scRow = scFieldCell.Row
 
@@ -92,54 +92,54 @@ Sub getDiscrepancies()
     Dim comments_column As Long
     
     'Ranges and variables for fields to compare across the two sheets.
-    Set receiptTicketCell = Sheets(ebsWorksheet).UsedRange.Find(what:="S C Tkt")
+    Set receiptTicketCell = Sheets(ebsWorksheet).UsedRange.Find(what:="S C Tkt", lookat:=xlWhole)
     receiptTicketColumn = receiptTicketCell.Column
     ebsStartingRow = receiptTicketCell.Row
-    Set receiptTicketCell_1 = Sheets(scWorksheet).UsedRange.Find(what:="Ticket Number")
+    Set receiptTicketCell_1 = Sheets(scWorksheet).UsedRange.Find(what:="Ticket Number", lookat:=xlWhole)
     receiptTicket_1Column = receiptTicketCell_1.Column
     scStartingRow = receiptTicketCell_1.Row
-    Set transactionDateCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Transaction Date")
+    Set transactionDateCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Transaction Date", lookat:=xlWhole)
     transactionDateColumn = transactionDateCell.Column
-    Set poNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Po Number")
+    Set poNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Po Number", lookat:=xlWhole)
     poNumberColumn = poNumberCell.Column
-    Set receiptNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Receipt Num")
+    Set receiptNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Receipt Num", lookat:=xlWhole)
     receiptNumberColumn = receiptNumberCell.Column
-    Set brokerCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Supplier", LookAt:=xlWhole)
+    Set brokerCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Supplier", lookat:=xlWhole)
     brokerColumn = brokerCell.Column
-    Set supplierCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Supplier", LookAt:=xlWhole)
+    Set supplierCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Supplier", lookat:=xlWhole)
     supplierColumn = supplierCell.Column
-    Set thirdPartySupplierCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Third Party Supplier")
+    Set thirdPartySupplierCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Third Party Supplier", lookat:=xlWhole)
     thirdPartySupplierColumn = thirdPartySupplierCell.Column
-    Set itemNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Item Number")
+    Set itemNumberCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Item Number", lookat:=xlWhole)
     itemNumberColumn = itemNumberCell.Column
-    Set itemDescCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Item Description")
+    Set itemDescCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Item Description", lookat:=xlWhole)
     itemDescColumn = itemDescCell.Column
-    Set primaryQtyCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Primary Quantity")
+    Set primaryQtyCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Primary Quantity", lookat:=xlWhole)
     primaryQtyColumn = primaryQtyCell.Column
-    Set unitPriceCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="PO Unit Price")
+    Set unitPriceCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="PO Unit Price", lookat:=xlWhole)
     unitPriceColumn = unitPriceCell.Column
-    Set grossWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Gross Weight")
+    Set grossWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Gross Weight", lookat:=xlWhole)
     grossWtColumn = grossWtCell.Column
-    Set tareWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Tare Weight")
+    Set tareWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Tare Weight", lookat:=xlWhole)
     tareWtColumn = tareWtCell.Column
-    Set netWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Net Weight")
+    Set netWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Net Weight", lookat:=xlWhole)
     netWtColumn = netWtCell.Column
-    Set cleanTareWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Clean Tare Wgt")
+    Set cleanTareWtCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Clean Tare Wgt", lookat:=xlWhole)
     cleanTareWtColumn = cleanTareWtCell.Column
-    Set adjustedQtyCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Adjusted Quantity")
+    Set adjustedQtyCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Adjusted Quantity", lookat:=xlWhole)
     adjustedQtyColumn = adjustedQtyCell.Column
     
-    shipmentNumberColumn = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Shipment Num").Column
-    poLineColumn = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Po Line Num").Column
+    shipmentNumberColumn = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Shipment Num", lookat:=xlWhole).Column
+    poLineColumn = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Po Line Num", lookat:=xlWhole).Column
 
-    Set invoiceNumCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice #")
+    Set invoiceNumCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice #", lookat:=xlWhole)
     invoiceNumColumn = invoiceNumCell.Column
-    Set invoiceDateCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice Date")
+    Set invoiceDateCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice Date", lookat:=xlWhole)
     invoiceDateColumn = invoiceDateCell.Column
-    Set invoiceTotalCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice Total")
+    Set invoiceTotalCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Invoice Total", lookat:=xlWhole)
     invoiceTotalColumn = invoiceTotalCell.Column
-    carrier_column = Sheets(scWorksheet).UsedRange.Find(what:="Carrier").Column
-    comments_column = Sheets(scWorksheet).UsedRange.Find(what:="Comments").Column
+    carrier_column = Sheets(scWorksheet).UsedRange.Find(what:="Carrier", lookat:=xlWhole).Column
+    comments_column = Sheets(scWorksheet).UsedRange.Find(what:="Comments", lookat:=xlWhole).Column
         
     'Copy select fields from EBS table to reconciled receipts table
     Sheets(ebsWorksheet).Range(Sheets(ebsWorksheet).Cells(ebsStartingRow, receiptTicketColumn), _
@@ -235,12 +235,12 @@ Sub getDiscrepancies()
     Sheets(reconciledSheet).Cells(reconciledLR, reconciledLC))
     
     'format po price column to dollars
-    With Sheets(reconciledSheet).Columns(Sheets(reconciledSheet).Rows(1).Find(what:="PO Unit Price").Column)
+    With Sheets(reconciledSheet).Columns(Sheets(reconciledSheet).Rows(1).Find(what:="PO Unit Price", lookat:=xlWhole).Column)
         .Style = "currency"
     End With
     
     Dim oracleMissingStatusColumn As Long
-    oracleMissingStatusColumn = Sheets("Receipts Missing From Oracle").UsedRange.Find(what:="Status").Column
+    oracleMissingStatusColumn = Sheets("Receipts Missing From Oracle").UsedRange.Find(what:="Status", lookat:=xlWhole).Column
     
     'find tickets missing from Oracle
     For j = Sheets("Receipts Missing From Oracle").UsedRange.Rows.Count To 2 Step -1
@@ -279,9 +279,9 @@ Sub getDiscrepancies()
         .Font.Size = 14
     End With
 
-    Set ebsStatusCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Transaction Type")
+    Set ebsStatusCell = Sheets(ebsWorksheet).Rows(ebsStartingRow).Find(what:="Transaction Type", lookat:=xlWhole)
     ebsStatusColumn = ebsStatusCell.Column
-    Set scStatusCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Status")
+    Set scStatusCell = Sheets(scWorksheet).Rows(scStartingRow).Find(what:="Status", lookat:=xlWhole)
     scStatusColumn = scStatusCell.Column
     
     'purge scrapconnect tickets that are NOT "void" from Void/RTV table
@@ -297,7 +297,7 @@ Sub getDiscrepancies()
     
     'Search scrapconnect ticket data for date fields and format
     With Sheets("Void and Return to Vendor").UsedRange
-        Set tempCell = .Find("Date", LookAt:=xlPart, MatchCase:=False)
+        Set tempCell = .Find("Date", lookat:=xlPart, MatchCase:=False)
         If Not tempCell Is Nothing Then
             firstAddress = tempCell.Address
             Do
@@ -341,7 +341,7 @@ Sub getDiscrepancies()
     With Sheets("Void and Return to Vendor").Range(Sheets("Void and Return to Vendor").Cells(tempLastRow + 3, 1), _
     Sheets("Void and Return to Vendor").Cells(Sheets("Void and Return to Vendor").UsedRange.Rows.Count, _
     Sheets("Void and Return to Vendor").UsedRange.Columns.Count))
-        Set tempCell = .Find("Date", LookAt:=xlPart, MatchCase:=False)
+        Set tempCell = .Find("Date", lookat:=xlPart, MatchCase:=False)
         If Not tempCell Is Nothing Then
             firstAddress = tempCell.Address
             Do
@@ -361,8 +361,8 @@ Sub getDiscrepancies()
     Dim reconciledTicketNumberColumn As Long
     Dim tempReconciledSheetRow As Long
     Dim varTicketNoColumn As Long
-    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:=ebsfield).Column
-    varTicketNoColumn = Sheets("Void and Return to Vendor").UsedRange.Find(what:="Ticket Number").Column
+    reconciledTicketNumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:=ebsfield, lookat:=xlWhole).Column
+    varTicketNoColumn = Sheets("Void and Return to Vendor").UsedRange.Find(what:="Ticket Number", lookat:=xlWhole).Column
     Dim primaryWeightColumn
     
     For Z = 3 To Sheets("Void and Return to Vendor").UsedRange.Rows.Count
@@ -383,7 +383,7 @@ Sub getDiscrepancies()
     Sheets.Add(after:=Sheets(reconciledSheet)).Name = "Pending Receipts"
     Sheets(scWorksheet).UsedRange.Copy
     Sheets("Pending Receipts").Range("A1").PasteSpecial xlPasteValues
-    pendingTicketNumberColumn = Sheets("Pending Receipts").UsedRange.Find(what:=scfield).Column
+    pendingTicketNumberColumn = Sheets("Pending Receipts").UsedRange.Find(what:=scfield, lookat:=xlWhole).Column
     
     'purge receipts from Pending Receipts table that are not Pending
     For h = scSheetLR To 2 Step -1
@@ -410,9 +410,9 @@ Sub getDiscrepancies()
     Sheets(reconciledSheet).UsedRange.Copy
     Sheets("Weight Discrepancies").Range("A1").PasteSpecial xlPasteValues
     
-    netWtColumn = Sheets("Weight Discrepancies").UsedRange.Find(what:="Net Weight").Column
-    primaryQtyColumn = Sheets("Weight Discrepancies").UsedRange.Find(what:="Primary Quantity").Column
-    adjustedQtyColumn = Sheets("Weight Discrepancies").UsedRange.Find(what:="Adjusted Quantity").Column
+    netWtColumn = Sheets("Weight Discrepancies").UsedRange.Find(what:="Net Weight", lookat:=xlWhole).Column
+    primaryQtyColumn = Sheets("Weight Discrepancies").UsedRange.Find(what:="Primary Quantity", lookat:=xlWhole).Column
+    adjustedQtyColumn = Sheets("Weight Discrepancies").UsedRange.Find(what:="Adjusted Quantity", lookat:=xlWhole).Column
     
     'check EBS weight against scrapconnect weight.  If weights equal, delete ticket from Weight Discrepancies table
     For p = reconciledLR To 2 Step -1
@@ -430,7 +430,7 @@ Sub getDiscrepancies()
     Dim comment_carrier(1) As String
     Dim rec_last_column As Long
     rec_last_column = Sheets(reconciledSheet).UsedRange.Columns.Count
-    rec_ticket_num_column = Sheets(reconciledSheet).UsedRange.Find(what:="S C Tkt").Column
+    rec_ticket_num_column = Sheets(reconciledSheet).UsedRange.Find(what:="S C Tkt", lookat:=xlWhole).Column
     Sheets(reconciledSheet).Cells(1, rec_last_column + 1).Value = "Carrier"
     Sheets(reconciledSheet).Cells(1, rec_last_column + 2).Value = "Comments"
     
