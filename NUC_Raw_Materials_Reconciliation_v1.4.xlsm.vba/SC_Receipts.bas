@@ -106,9 +106,9 @@ On Error GoTo ErrorHandler
     scColumn = scFieldCell.Column
     scRow = scFieldCell.Row
 
-    For i = scStartingRow - 1 To 1 Step -1
-        Sheets(scWorksheet).Rows(i).Delete
-    Next
+'    For i = scStartingRow - 1 To 1 Step -1
+'        Sheets(scWorksheet).Rows(i).Delete
+'    Next
     
     'find used range of sheet
     scSheetLR = ActiveSheet.UsedRange.Rows _
@@ -125,9 +125,9 @@ On Error GoTo ErrorHandler
     End With
     
     With scSheetRange
-        .Cells.Replace what:=vbCr, Replacement:="", LookAt:=xlPart
-        .Cells.Replace what:=vbLf, Replacement:="", LookAt:=xlPart
-        .Cells.Replace what:=vbCrLf, Replacement:="", LookAt:=xlPart
+        .Cells.Replace what:=vbCr, Replacement:="", lookat:=xlPart
+        .Cells.Replace what:=vbLf, Replacement:="", lookat:=xlPart
+        .Cells.Replace what:=vbCrLf, Replacement:="", lookat:=xlPart
         .Borders.LineStyle = xlContinuous
         .Columns.AutoFit
         .Rows.AutoFit
