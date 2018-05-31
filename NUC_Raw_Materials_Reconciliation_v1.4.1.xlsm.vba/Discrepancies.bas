@@ -247,7 +247,8 @@ Sub getDiscrepancies()
         If Not Application.WorksheetFunction.IsNA(Application.Match(Sheets(scWorksheet).Cells(j, scColumn), _
         Sheets(ebsWorksheet).Columns(ebsColumn), 0)) Then
         Sheets("Receipts Missing From Oracle").Rows(j).EntireRow.Delete
-        ElseIf Sheets("Receipts Missing From Oracle").Cells(j, oracleMissingStatusColumn).Value <> "Processed" Then
+        ElseIf Sheets("Receipts Missing From Oracle").Cells(j, oracleMissingStatusColumn).Value <> "Processed" And _
+        Sheets("Receipts Missing From Oracle").Cells(j, oracleMissingStatusColumn).Value <> "Processed Rejected" Then
         Sheets("Receipts Missing From Oracle").Rows(j).EntireRow.Delete
       
         End If
@@ -286,7 +287,8 @@ Sub getDiscrepancies()
     
     'purge scrapconnect tickets that are NOT "void" from Void/RTV table
     For i = Sheets("Void and Return to Vendor").UsedRange.Rows.Count To 3 Step -1
-        If Sheets("Void and Return to Vendor").Cells(i, scStatusColumn) <> "Void" Then
+        If Sheets("Void and Return to Vendor").Cells(i, scStatusColumn) <> "Void" And _
+        Sheets("Void and Return to Vendor").Cells(i, scStatusColumn) <> "Void Rejected" Then
         Sheets("Void and Return to Vendor").Rows(i).EntireRow.Delete
         End If
     Next
