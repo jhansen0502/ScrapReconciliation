@@ -6,18 +6,25 @@ On Error GoTo ErrorHandler
     Application.EnableEvents = False
     ActiveSheet.DisplayPageBreaks = False
 
-    Dim invReceiptNumColumn As Long
-    Dim ebsReceiptNumColumn As Long
     Dim reconciledReceiptNumColumn As Long
+    Dim reconciledPONumberColumn As Long
+    Dim reconciledTicketNumberColumn As Long
+    Dim reconciledInvNumColumn As Long
+    Dim reconciledInvAmountColumn As Long
+    Dim reconciledInvQtyColumn As Long
+    Dim reconciledPrimaryQuantityColumn As Long
+    Dim reconciledInvoices As String
+    Dim reconciledInvColumn As Long
+    Dim reconciledTransDateColumn As Long
+    Dim reconciledShipmentIdColumn As Long
 
     Dim invPoColumn As Long
     Dim ebsPoColumn As Long
-    
+    Dim invReceiptNumColumn As Long
+    Dim ebsReceiptNumColumn As Long
     Dim invPoLineColumn As Long
     Dim ebsPoLineColumn As Long
-    Dim reconciledPONumberColumn As Long
     
-    Dim reconciledTicketNumberColumn As Long
     Dim scTicketNumberColumn As Long
     Dim invInvoiceAmountColumn As Long
     Dim invInvoiceTypeColumn As Long
@@ -25,14 +32,9 @@ On Error GoTo ErrorHandler
     Dim scInvoiceAmountColumn As Long
     Dim invInvoiceNumberColumn As Long
     Dim scInvoiceNumberColumn As Long
-    Dim reconciledInvNumColumn As Long
-    Dim reconciledInvAmountColumn As Long
-    Dim reconciledInvQtyColumn As Long
     Dim invInvoiceQuantityColumn As Long
     Dim ebsReceiptQuantityColumn As Long
     Dim matchedRow As Long
-    Dim reconciledPrimaryQuantityColumn As Long
-    Dim reconciledInvoices As String
     Dim invStartingRow As Long
     Dim recInvoicesLC As Long
     Dim recInvTicketNumberColumn As Long
@@ -44,8 +46,16 @@ On Error GoTo ErrorHandler
     Dim recInvInvoicePOColumn As Long
     Dim recInvReceiptNumberColumn As Long
     Dim tempRow As Long
-    Dim reconciledInvColumn As Long
-    Dim reconciledTransDateColumn As Long
+    Dim recInvShipmentIdColumn As Long
+    Dim invLineTypeColumn As Long
+    Dim invDistAmountColumn As Long
+    Dim invLineDescColumn As Long
+    Dim invCancelDateColumn As Long
+    Dim recInvReceiptStatusColumn As Long
+    Dim recInvLineTypeColumn As Long
+    Dim recInvDistAmountColumm As Long
+    Dim recInvLineDescColumn As Long
+    Dim recInvCancelDateColumn As Long
     
     invworksheet = "Invoice Report"
     ebsWorksheet = "Oracle Report"
@@ -56,6 +66,10 @@ On Error GoTo ErrorHandler
     'add table for Reconciled Invoices and define invoice report columns for lookups
     Sheets.Add(after:=Sheets(1)).Name = reconciledInvoices
     
+    invLineTypeColumn = Sheets(invworksheet).UsedRange.Find(what:="Line Type", lookat:=xlWhole).Column
+    invDistAmountColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Dist Amount", lookat:=xlWhole).Column
+    invLineDescColumn = Sheets(invworksheet).UsedRange.Find(what:="Inv Line Desc", lookat:=xlWhole).Column
+    invCancelDateColumn = Sheets(invworksheet).UsedRange.Find(what:="Cancelled Date", lookat:=xlWhole).Column
     invInvoiceTypeColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Type", lookat:=xlWhole).Column
     invInvoiceDateColumn = Sheets(invworksheet).UsedRange.Find(what:="Invoice Date", lookat:=xlWhole).Column
     invReceiptNumColumn = Sheets(invworksheet).UsedRange.Find(what:="Receipt Num", lookat:=xlWhole).Column
@@ -74,33 +88,50 @@ On Error GoTo ErrorHandler
         .Cells(invsheetlr, invReceiptNumColumn)).Copy
         Sheets(reconciledInvoices).Range("A1").PasteSpecial xlPasteValues
         
-        .Range(Sheets(invworksheet).Cells(invStartingRow, invInvoiceTypeColumn), Sheets(invworksheet) _
-        .Cells(invsheetlr, invInvoiceTypeColumn)).Copy
-        Sheets(reconciledInvoices).Range("B1").PasteSpecial xlPasteValues
-        
         .Range(Sheets(invworksheet).Cells(invStartingRow, invInvoiceNumberColumn), Sheets(invworksheet) _
         .Cells(invsheetlr, invInvoiceNumberColumn)).Copy
-        Sheets(reconciledInvoices).Range("C1").PasteSpecial xlPasteValues
+        Sheets(reconciledInvoices).Range("B1").PasteSpecial xlPasteValues
         
+        .Range(Sheets(invworksheet).Cells(invStartingRow, invInvoiceTypeColumn), Sheets(invworksheet) _
+        .Cells(invsheetlr, invInvoiceTypeColumn)).Copy
+        Sheets(reconciledInvoices).Range("C1").PasteSpecial xlPasteValues
+                
+        .Range(Sheets(invworksheet).Cells(invStartingRow, invLineTypeColumn), Sheets(invworksheet) _
+        .Cells(invsheetlr, invLineTypeColumn)).Copy
+        Sheets(reconciledInvoices).Range("D1").PasteSpecial xlPasteValues
+        
+        .Range(Sheets(invworksheet).Cells(invStartingRow, invLineDescColumn), Sheets(invworksheet) _
+        .Cells(invsheetlr, invLineDescColumn)).Copy
+        Sheets(reconciledInvoices).Range("E1").PasteSpecial xlPasteValues
+        
+        .Range(Sheets(invworksheet).Cells(invStartingRow, invDistAmountColumn), Sheets(invworksheet) _
+        .Cells(invsheetlr, invDistAmountColumn)).Copy
+        Sheets(reconciledInvoices).Range("F1").PasteSpecial xlPasteValues
+
         .Range(Sheets(invworksheet).Cells(invStartingRow, invInvoiceDateColumn), Sheets(invworksheet) _
         .Cells(invsheetlr, invInvoiceDateColumn)).Copy
-        Sheets(reconciledInvoices).Range("D1").PasteSpecial xlPasteValues
+        Sheets(reconciledInvoices).Range("G1").PasteSpecial xlPasteValues
 
         .Range(Sheets(invworksheet).Cells(invStartingRow, invInvoiceQuantityColumn), Sheets(invworksheet) _
         .Cells(invsheetlr, invInvoiceQuantityColumn)).Copy
-        Sheets(reconciledInvoices).Range("E1").PasteSpecial xlPasteValues
+        Sheets(reconciledInvoices).Range("H1").PasteSpecial xlPasteValues
 
         .Range(Sheets(invworksheet).Cells(invStartingRow, invInvoiceAmountColumn), Sheets(invworksheet) _
         .Cells(invsheetlr, invInvoiceAmountColumn)).Copy
-        Sheets(reconciledInvoices).Range("F1").PasteSpecial xlPasteValues
+        Sheets(reconciledInvoices).Range("I1").PasteSpecial xlPasteValues
         
         .Range(Sheets(invworksheet).Cells(invStartingRow, invPoColumn), Sheets(invworksheet) _
         .Cells(invsheetlr, invPoColumn)).Copy
-        Sheets(reconciledInvoices).Range("G1").PasteSpecial xlPasteValues
+        Sheets(reconciledInvoices).Range("J1").PasteSpecial xlPasteValues
 
         .Range(Sheets(invworksheet).Cells(invStartingRow, invPoLineColumn), Sheets(invworksheet) _
         .Cells(invsheetlr, invPoLineColumn)).Copy
-        Sheets(reconciledInvoices).Range("H1").PasteSpecial xlPasteValues
+        Sheets(reconciledInvoices).Range("K1").PasteSpecial xlPasteValues
+        
+        .Range(Sheets(invworksheet).Cells(invStartingRow, invCancelDateColumn), Sheets(invworksheet) _
+        .Cells(invsheetlr, invCancelDateColumn)).Copy
+        Sheets(reconciledInvoices).Range("L1").PasteSpecial xlPasteValues
+
     End With
         
         recInvoicesLC = Sheets(reconciledInvoices).UsedRange.Columns.Count
@@ -121,6 +152,8 @@ On Error GoTo ErrorHandler
     'insert summary data/feedback columns
     With Sheets(reconciledInvoices)
         .Columns(1).EntireColumn.Insert
+        .Cells(1, 1).Value = "Shipment Num"
+        .Columns(1).EntireColumn.Insert
         .Cells(1, 1).Value = "Ticket Number"
         .Columns(1).EntireColumn.Insert
         .Cells(1, 1).Value = "Receipt Verified?"
@@ -137,6 +170,7 @@ On Error GoTo ErrorHandler
     recInvInvoiceQtyColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Qty Received", lookat:=xlWhole).Column
     recInvInvoicePOColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="PO Number & PO Line", lookat:=xlWhole).Column
     reconciledLC = Sheets(reconciledSheet).UsedRange.Columns.Count
+    recInvShipmentIdColumn = Sheets(reconciledInvoices).UsedRange.Find(what:="Shipment Num", lookat:=xlWhole).Column
     
     With Sheets(reconciledSheet)
         .Columns(1).EntireColumn.Insert
@@ -168,6 +202,7 @@ On Error GoTo ErrorHandler
     scInvoiceNumberColumn = Sheets(scWorksheet).UsedRange.Find(what:="Invoice #", lookat:=xlWhole).Column
     reconciledPrimaryQuantityColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Primary Quantity", lookat:=xlWhole).Column
     reconciledPONumberColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Po Number", lookat:=xlWhole).Column
+    reconciledShipmentIdColumn = Sheets(reconciledSheet).UsedRange.Find(what:="Shipment Num", lookat:=xlWhole).Column
     
     For p = invsheetlr To 2 Step -1
         'check invoice info to verify the receipt has been reconciled.  also checks that invoice is not
@@ -185,7 +220,7 @@ On Error GoTo ErrorHandler
         End If
     Next
     
-    'if no invoice for receipt, insert red X in invoiced? column on reconciled receipts sheet, else insert green check
+    'if no invoice for receipt, insert red X in "invoiced?" column on reconciled receipts sheet, else insert green check
     For q = 2 To reconciledLR
         If Sheets(reconciledSheet).Cells(q, reconciledInvNumColumn).Value = "" Then
                     
@@ -219,6 +254,9 @@ On Error GoTo ErrorHandler
             
             Sheets(reconciledInvoices).Cells(R, recInvTicketNumberColumn).Value = _
             Sheets(reconciledSheet).Cells(tempRow, reconciledTicketNumberColumn).Value
+            
+            Sheets(reconciledInvoices).Cells(R, recInvShipmentIdColumn).Value = _
+            Sheets(reconciledSheet).Cells(tempRow, reconciledShipmentIdColumn).Value
         End If
     Next
         
@@ -255,7 +293,7 @@ On Error GoTo ErrorHandler
                 .Cells(q, invoiceVerifiedColumn).Value = "CM"
                 .Cells(q, invoiceVerifiedColumn).Font.Bold = True
                 .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(0, 0, 255)
-                .Cells(q, receiptVerifiedColumn).Value = "Ticket Not in ScrapConnect"
+                .Cells(q, receiptVerifiedColumn).Value = "Receipt Not in Scale Connect"
                 .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
                 .Cells(q, receiptVerifiedColumn).Font.Bold = True
             End With
@@ -264,7 +302,7 @@ On Error GoTo ErrorHandler
                 .Cells(q, invoiceVerifiedColumn).Value = ChrW(10006) '"X"
                 .Cells(q, invoiceVerifiedColumn).Font.Bold = True
                 .Cells(q, invoiceVerifiedColumn).Font.Color = RGB(255, 0, 0)
-                .Cells(q, receiptVerifiedColumn).Value = "Ticket Not in ScrapConnect"
+                .Cells(q, receiptVerifiedColumn).Value = "Receipt Not in Scale Connect"
                 .Cells(q, receiptVerifiedColumn).Font.Color = RGB(255, 0, 0)
                 .Cells(q, receiptVerifiedColumn).Font.Bold = True
             End With
@@ -424,10 +462,11 @@ On Error GoTo ErrorHandler
         key2:=(Sheets(reconciledInvoices).Columns(2)), order2:=xlDescending, Header:=xlYes
         .Borders.LineStyle = xlContinuous
     End With
-
+    Dim reconciledreceiptstatuscolumn As Long
+    reconciledreceiptstatuscolumn = Sheets(reconciledSheet).UsedRange.Find(what:="Receipt Status", lookat:=xlWhole).Column
     With Sheets(reconciledSheet).UsedRange
         .Sort key1:=(Sheets(reconciledSheet).Columns(reconciledInvColumn)), order1:=xlDescending, Header:=xlYes, _
-        key2:=(Sheets(reconciledSheet).Columns(reconciledTransDateColumn)), order2:=xlDescending, Header:=xlYes
+        key2:=(Sheets(reconciledSheet).Columns(reconciledreceiptstatuscolumn)), order2:=xlDescending, Header:=xlYes
         .Borders.LineStyle = xlContinuous
     End With
     
