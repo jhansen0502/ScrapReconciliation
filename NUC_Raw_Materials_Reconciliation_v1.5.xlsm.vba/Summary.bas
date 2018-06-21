@@ -105,8 +105,15 @@ On Error GoTo ErrorHandler
     
 '    g = Application.WorksheetFunction.CountIf(reconcileRange.Columns(Sheets(reconciledSheet) _
     .UsedRange.Find(what:="Invoice Total").Column), ">0")
-    h = Application.Count(Sheets(reconciledSheet).Range("B1:B" & Sheets(reconciledSheet).UsedRange.Rows.Count))
+'    h = Application.CountIf(Sheets(reconciledSheet).Range("B3:B" & Sheets(reconciledSheet).UsedRange.Rows.Count))
     
+    If Sheets.Count < 10 Then
+    h = Application.WorksheetFunction.CountIf(Sheets(reconciledSheet).Range("A3:A" & Sheets(reconciledSheet). _
+    UsedRange.Rows.Count), "Complete")
+    Else
+    h = Application.WorksheetFunction.CountIf(Sheets(reconciledSheet).Range("B3:B" & Sheets(reconciledSheet). _
+    UsedRange.Rows.Count), "Complete")
+    End If
 
     'create table links
     With Worksheets(1)
@@ -164,7 +171,7 @@ On Error GoTo ErrorHandler
     End With
      
     If UserForm1.OptionButton1.Value = "False" Then
-    Sheets(1).Range("K5:L6").Delete Shift:=xlUp
+    Sheets(1).Range("K5:L6").Delete shift:=xlUp
     End If
 
     For i = 2 To Sheets.Count
@@ -173,8 +180,7 @@ On Error GoTo ErrorHandler
         sheetlr = Sheets(i).UsedRange.Rows _
         (Sheets(i).UsedRange.Rows.Count).Row
         
-        sheetlc = Sheets(i).UsedRange.Rows _
-        (Sheets(i).UsedRange.Rows.Count).Row
+        sheetlc = Sheets(i).UsedRange.Columns.Count
 
         Set sheetRange = Sheets(i).Range(Sheets(i).Cells(1, 1), Sheets(i).Cells(sheetlr, sheetlc))
                             
@@ -186,6 +192,9 @@ On Error GoTo ErrorHandler
         
         With Sheets(i).UsedRange
             .Rows(1).Font.Bold = True
+            If Not Sheets(i).Name = "Void and Return To Vendor" Then
+                .AutoFilter
+            End If
             .Columns.AutoFit
         End With
         
@@ -229,7 +238,7 @@ On Error GoTo ErrorHandler
         .Font.Bold = True
         .Font.Name = "arial"
         .Rows.AutoFit
-        .BorderAround ColorIndex:=0, Weight:=xlThick
+        .BorderAround ColorIndex:=0, weight:=xlThick
         .Columns.AutoFit
     End With
     
@@ -243,6 +252,9 @@ On Error GoTo ErrorHandler
     With Sheets("Reconciled Invoices")
         .Columns(Sheets("Reconciled Invoices").UsedRange _
         .Find(what:="Invoice Amount", lookat:=xlWhole).Column) _
+        .NumberFormat = "$#,##0.00_);[Red]($#,##0.00)"
+        .Columns(Sheets("Reconciled Invoices").UsedRange _
+        .Find(what:="Invoice Dist Amount", lookat:=xlWhole).Column) _
         .NumberFormat = "$#,##0.00_);[Red]($#,##0.00)"
         .Visible = xlSheetHidden
     End With
